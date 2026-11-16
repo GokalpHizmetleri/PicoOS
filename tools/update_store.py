@@ -53,7 +53,7 @@ WEB_EXT = {"html", "htm", "css", "js", "mjs", "json", "svg", "png", "jpg", "jpeg
            "ico", "woff", "woff2", "ttf", "otf", "txt", "wasm", "mp3", "wav", "ogg", "webmanifest",
            "csv", "xml", "glsl", "frag", "vert"}
 DEFAULT_EXCLUDE = [
-    ".*", "*/.*", "node_modules/*", "*/node_modules/*", "test/*", "tests/*", "spec/*", "docs/*",
+    ".git/*", ".github/*", ".vscode/*", ".idea/*", "*/.git/*", "node_modules/*", "*/node_modules/*", "test/*", "tests/*", "spec/*", "docs/*",
     "*.md", "*.map", "*.scss", "*.sass", "*.less", "*.ts", "*.eot", "*.psd", "package.json",
     "package-lock.json", "bower.json", "composer.json", "*.config.js", "gulpfile.js", "Gruntfile.js",
     "webpack.*", "rollup.*", "*.min.js.gz", "LICENSE*", "license*",
@@ -130,6 +130,8 @@ def list_files(repo, sha, root="", exclude=()):
         ext = rel.rsplit(".", 1)[-1].lower() if "." in rel else ""
         if ext not in WEB_EXT:
             continue
+        if rel.split("/")[-1].startswith("."):
+            continue  # dotfiles (.gitignore, .DS_Store, ...)
         if any(fnmatch.fnmatch(rel, p) or fnmatch.fnmatch(rel.split("/")[-1], p) for p in patterns):
             continue
         out.append({"path": rel, "size": f["size"]})

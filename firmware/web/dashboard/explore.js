@@ -37,8 +37,8 @@
   const CONCURRENCY = 6;
   const ROOTS = ["", "docs", "public", "dist", "build", "www", "site", "app", "web", "html", "src", "demo", "example", "client", "static"];
   const WEB_EXT = /\.(html?|css|m?js|json|svg|png|jpe?g|gif|webp|avif|ico|bmp|woff2?|ttf|otf|txt|wasm|mp3|wav|ogg|m4a|mp4|webm|webmanifest|csv|xml|glsl|frag|vert|obj|gltf|glb|bin|ttf)$/i;
-  const SKIP_PATH = /(^|\/)(\.[^/]+|node_modules|__tests__|tests?|spec|cypress|coverage|\.github)(\/|$)/i;
-  const SKIP_NAME = /^(package(-lock)?\.json|bower\.json|composer\.json|tsconfig.*\.json|jsconfig\.json|yarn\.lock|.*\.config\.(js|mjs|cjs)|gulpfile\.js|gruntfile\.js|webpack\..*|rollup\..*|license.*|licence.*|readme.*|changelog.*|contributing.*|.*\.min\.js\.map)$/i;
+  const SKIP_PATH = /(^|\/)(\.git|\.github|\.vscode|\.idea|\.husky|\.circleci|\.devcontainer|\.vercel|\.netlify|node_modules|__tests__|tests?|spec|cypress|coverage)(\/|$)/i;
+  const SKIP_NAME = /^(\..*|package(-lock)?\.json|bower\.json|composer\.json|tsconfig.*\.json|jsconfig\.json|yarn\.lock|.*\.config\.(js|mjs|cjs)|gulpfile\.js|gruntfile\.js|webpack\..*|rollup\..*|license.*|licence.*|readme.*|changelog.*|contributing.*|.*\.min\.js\.map)$/i;
   const WEB_LANGS = new Set(["HTML", "JavaScript", "CSS", null, undefined, "SCSS", "Less", "GLSL", "WebAssembly"]);
 
   const E = {
@@ -283,11 +283,28 @@
         try { manifest = await (await fetch(rawUrl(repo.full_name, branch, "picoos.json"))).json(); } catch { manifest = null; }
       }
       const roots = manifest && manifest.root != null ? [String(manifest.root).replace(/^\/+|\/+$/g, "")] : ROOTS;
+      const tried = new Set();
       for (const root of roots) {
+        tried.add(root);
         const res = await evaluateRoot(repo, branch, all, root, manifest);
         if (!res) continue;
         if (res.ok) return res;
         lastFail = lastFail || res;
+      }
+      if (!lastFail && !manifest) {
+        // No index.html in the usual places: use the folder of the only shallow index.html, if any.
+        const dirs = all.map((f) => f.path).filter((p) => /(^|\/)index\.html?$/i.test(p) && !SKIP_PATH.test(p))
+          .map((p) => p.slice(0, p.lastIndexOf("/") + 1).replace(/\/$/, ""))
+          .filter((d) => d.split("/").length <= 3 && !tried.has(d));
+        const minDepth = Math.min(...dirs.map((d) => d.split("/").length));
+        const shallow = dirs.filter((d) => d.split("/").length === minDepth);
+        if (shallow.length === 1) {
+          const res = await evaluateRoot(repo, branch, all, shallow[0], null);
+          if (res && res.ok) return res;
+          lastFail = res || lastFail;
+        } else if (shallow.length > 1) {
+          lastFail = { ok: false, reason: `Collection of ${shallow.length} projects, no single app` };
+        }
       }
     }
     return lastFail || { ok: false, reason: "No index.html found" };

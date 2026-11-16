@@ -48,8 +48,10 @@ def safe_rel(rel):
         return None
     parts = rel.split("/")
     for p in parts:
-        if not p or p in (".", "..") or p.startswith("."):
+        if not p or p in (".", ".."):
             return None
+    if parts[0] in (".git", ".picoos"):
+        return None
     return "/".join(parts)
 
 
