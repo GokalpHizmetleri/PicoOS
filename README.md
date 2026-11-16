@@ -35,7 +35,7 @@ an internet-synced clock and a storage overview.
 | 🏠 **Dashboard at `pico.local`** | A modern, glass-style home screen (inspired by home-server dashboards like CasaOS) that works on desktop and phone. |
 | 🕒 **Clock for where you are** | Time comes from NTP; the time zone is detected from your internet connection's location, including daylight saving time. Manual override available. |
 | 💾 **Storage at a glance** | Total, used and free flash, split into apps and system. |
-| 🛍️ **App Store** | Official apps come from this repository's `store/` folder, plus community apps from any public GitHub repo tagged `picoos-app`. It's always up to date, and it checks free space before installing. |
+| 🛍️ **App Store** | **Real open-source web apps and games from GitHub** (2048, Sudoku, Pong, a WebGL fluid simulation, a QR generator…), downloaded straight from their own repositories, plus apps made for PicoOS and community apps tagged `picoos-app`. It's refreshed from GitHub daily and checks free space before installing. |
 | ⬆️ **Upload your own apps** | Drop a single `.html` file, a folder, several files or a `.zip`. HTML, CSS, JS, images, fonts: anything a browser can run. |
 | 🔌 **Every app gets its own port** | Click an app on the home screen to open it at `http://pico.local:8081`, `:8082`, … (also reachable at `/apps/<id>/`). |
 | 🧰 **App SDK** | Apps can store data on the Pico, read system info and the clock, toggle the LED, use GPIO pins, and even ship a small **MicroPython backend**. |
@@ -45,7 +45,7 @@ an internet-synced clock and a storage overview.
 
 <table>
 <tr>
-<td width="50%"><img src="docs/images/app-store.webp" alt="App Store"><br><sub><b>App Store</b>: official and community apps, with a free-space check</sub></td>
+<td width="50%"><img src="docs/images/app-store.webp" alt="App Store"><br><sub><b>App Store</b>: real open-source apps from GitHub, with stars, license and a free-space check</sub></td>
 <td width="50%"><img src="docs/images/upload.webp" alt="Upload your own app"><br><sub><b>Upload</b>: a single HTML file, a folder or a .zip</sub></td>
 </tr>
 <tr>
@@ -83,24 +83,63 @@ More detail, including troubleshooting, is in **[docs/getting-started.md](docs/g
 
 ## The App Store
 
-The official store ships these apps. All of them are small, original and made for PicoOS:
+Every app in the store runs on a Pico 2 W: it's static HTML/CSS/JS, small enough for the flash, and
+each one is tested by installing it on PicoOS and opening it in a real browser
+([`tests/store_apps_test.js`](tests/store_apps_test.js)).
+
+### Open-source apps from GitHub
+
+These are existing open-source projects. PicoOS doesn't copy them: your browser downloads them from
+**their own GitHub repositories** at a pinned commit. A daily CI job
+([`tools/update_store.py`](tools/update_store.py)) moves the pins to each project's latest commit,
+so upstream improvements arrive as **Update** buttons.
+
+| App | Repository | License | Stars | Size |
+|---|---|---|---|---|
+| 🧩 2048 | [gabrielecirulli/2048](https://github.com/gabrielecirulli/2048) | MIT | ★ 13.5k | 139 KB |
+| 🧱 Falling Blocks | [jakesgordon/javascript-tetris](https://github.com/jakesgordon/javascript-tetris) | MIT | ★ 742 | 65 KB |
+| 🏓 Pong | [jakesgordon/javascript-pong](https://github.com/jakesgordon/javascript-pong) | MIT | ★ 222 | 59 KB |
+| ☄️ Vector Asteroids | [dmcinnes/HTML5-Asteroids](https://github.com/dmcinnes/HTML5-Asteroids) | MIT | ★ 357 | 247 KB |
+| 🌊 Fluid Simulation | [PavelDoGreat/WebGL-Fluid-Simulation](https://github.com/PavelDoGreat/WebGL-Fluid-Simulation) | MIT | ★ 16.8k | 151 KB |
+| 🔳 QR Code Generator | [davidshimjs/qrcodejs](https://github.com/davidshimjs/qrcodejs) | MIT | ★ 14.3k | 125 KB |
+| 🔢 Sudoku | [robatron/sudoku.js](https://github.com/robatron/sudoku.js) | MIT | ★ 499 | 319 KB |
+| ✏️ Sketch Pad | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/drawing-app) | MIT | ★ 40.6k | 3.0 KB |
+| 🔑 Password Generator | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/password-generator) | MIT | ★ 40.6k | 5.1 KB |
+| 🕰️ Analog Clock | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/theme-clock) | MIT | ★ 40.6k | 4.8 KB |
+| 💧 Drink Water | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/drink-water) | MIT | ★ 40.6k | 4.1 KB |
+| 🐞 Catch the Insect | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/insect-catch-game) | MIT | ★ 40.6k | 6.1 KB |
+| ❓ Quiz | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/quiz-app) | MIT | ★ 40.6k | 4.5 KB |
+| 🎲 Random Picker | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/random-choice-picker) | MIT | ★ 40.6k | 2.8 KB |
+| 🔊 Sound Board | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/sound-board) | MIT | ★ 40.6k | 232 KB |
+| ⌨️ Key Codes | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/event-keycodes) | MIT | ★ 40.6k | 1.5 KB |
+| 😄 Dad Jokes | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/dad-jokes) | MIT | ★ 40.6k | 2.2 KB |
+| 🖼️ Photo Cards | [bradtraversy/50projects50days](https://github.com/bradtraversy/50projects50days/tree/master/expanding-cards) | MIT | ★ 40.6k | 2.7 KB |
+
+The list lives in [`store/sources.json`](store/sources.json). To add a project, see
+[Listing an existing open-source project](docs/app-development.md#listing-an-existing-open-source-project).
+The CI job also **discovers** new small, build-free web projects through GitHub search.
+
+### Made for PicoOS
+
+Apps that use the PicoOS SDK, for example to store data on the Pico or control its LED and GPIO:
 
 | App | What it does | Size |
 |---|---|---|
-| 📝 Notes | Notes stored on the Pico, shared by all your devices | 5.5 KB |
-| ✅ Tasks | To-do list with priorities | 5.4 KB |
-| ⏱️ Focus Timer | Focus/break timer, can blink the Pico LED | 5.7 KB |
-| 🎨 Pixel Paint | 16×16 / 32×32 pixel art with a gallery saved on the Pico | 6.3 KB |
-| 🌦️ Weather | Forecast for the location PicoOS detected (Open-Meteo) | 6.9 KB |
-| 🟢 Pico Control | On-board LED, GPIO pins and chip temperature | 6.1 KB |
-| 📈 System Monitor | Live memory/temperature graphs and storage breakdown | 5.0 KB |
-| 🧮 Calculator | Calculator with keyboard support | 4.9 KB |
-| 💬 Guestbook | Example app with a **MicroPython backend** | 5.1 KB |
-| 👋 Hello World | Starter template for your own apps | 3.6 KB |
+| 🧮 Calculator | A clean calculator with keyboard support, percentage, sign toggle and a running history of your last results | 4.9 KB |
+| ⏱️ Focus Timer | A focus/break interval timer with a progress ring, gentle chime and a daily session counter | 5.7 KB |
+| 💬 Guestbook | Let visitors on your network leave a message | 5.1 KB |
+| 👋 Hello World | The starter template for building your own PicoOS app | 3.6 KB |
+| 📝 Notes | Quick notes saved directly on your Pico, so they follow you to every device on your network | 5.5 KB |
+| 🟢 Pico Control | Toggle the on-board LED and drive or read GPIO pins of your Pico 2 W from the browser, with a live chip temperature graph | 6.1 KB |
+| 🎨 Pixel Paint | Draw 16×16 or 32×32 pixel art with a palette, fill bucket and eraser | 6.3 KB |
+| 📈 System Monitor | Live graphs of memory usage and chip temperature, storage breakdown per app and uptime of your PicoOS device | 5.0 KB |
+| ✅ Tasks | A simple to-do list with priorities and filters | 5.4 KB |
+| 🌦️ Weather | Current conditions, hourly and 7-day forecast for your location | 6.9 KB |
 
-The catalog (`store/catalog.json`) is regenerated by CI on every push, so new apps and updates appear
-in every PicoOS dashboard right away. **Community apps** show up automatically when a public GitHub
-repository has the topic `picoos-app`. See [Publishing an app](docs/app-development.md#publishing-your-app).
+### Community
+
+Any public GitHub repository with the topic **`picoos-app`** shows up under *Community* automatically.
+See [Publishing an app](docs/app-development.md#publishing-your-app).
 
 ## How it works
 

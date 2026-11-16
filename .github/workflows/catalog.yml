@@ -1,15 +1,25 @@
 name: App Store catalog
 
-# Keeps store/catalog.json in sync with store/apps/ so every PicoOS dashboard
-# sees new and updated apps as soon as they land on main.
+# Keeps store/catalog.json current:
+#  - PicoOS apps from store/apps/
+#  - open-source apps from their own GitHub repos (store/sources.json), pinned
+#    to the newest commit of each repo, plus newly discovered projects
+# Every PicoOS dashboard reads this file, so upstream updates show up as
+# "Update" buttons within a day.
 on:
+  schedule:
+    - cron: "17 4 * * *"      # daily
   push:
     branches: [main]
-    paths: ["store/apps/**", "tools/build_catalog.py"]
+    paths: ["store/**", "tools/update_store.py"]
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: catalog
+  cancel-in-progress: false
 
 jobs:
   catalog:
@@ -19,8 +29,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Regenerate catalog
-        run: python tools/build_catalog.py
+      - name: Regenerate catalog from GitHub
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python tools/update_store.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Playwright
+        run: npm install --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
+      - name: Install and open every GitHub app on PicoOS (simulator)
+        run: node tests/store_apps_test.js --prune-discovered
       - name: Commit if changed
         run: |
           if git diff --quiet store/catalog.json; then
@@ -29,6 +48,6 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add store/catalog.json
-            git commit -m "store: update catalog.json"
+            git commit -m "store: refresh catalog.json"
             git push
           fi

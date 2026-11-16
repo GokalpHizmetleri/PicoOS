@@ -197,6 +197,11 @@ body[data-wallpaper="candy"]    { --wall-base: #1a0b26; --w1: #ec4899; --w2: #8b
 .tag.ok { background: rgba(52, 211, 153, .14); color: #6ee7b7; }
 .tag.bad { background: rgba(248, 113, 113, .14); color: #fca5a5; }
 .tag.star { background: rgba(251, 191, 36, .14); color: #fcd34d; }
+.tag.gh { display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, .1); color: var(--text); }
+.tag.pico { background: rgba(124, 156, 255, .16); color: #c7d2fe; }
+.tag.warn { background: rgba(251, 191, 36, .12); color: #fcd34d; }
+.store-link { color: var(--muted); text-decoration: none; }
+.store-link:hover { color: var(--accent); text-decoration: underline; }
 .store-msg { text-align: center; padding: 50px 10px; color: var(--muted); }
 .store-msg .btn { margin-top: 14px; }
 .mini-progress { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .1); overflow: hidden; width: 100%; }

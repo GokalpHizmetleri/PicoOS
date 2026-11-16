@@ -1,7 +1,7 @@
 {
-  "schema": 1,
+  "schema": 2,
   "name": "PicoOS App Store",
-  "updated": "2026-11-16T11:16:25Z",
+  "updated": "2026-11-16T11:45:22Z",
   "apps": [
     {
       "id": "calculator",
@@ -13,6 +13,7 @@
       "icon": "icon.svg",
       "color": "#f59e0b",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/calculator",
       "size": 5025,
       "files": [
@@ -36,6 +37,7 @@
       "icon": "icon.svg",
       "color": "#f43f5e",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/focus-timer",
       "size": 5869,
       "files": [
@@ -60,6 +62,7 @@
       "color": "#8b5cf6",
       "entry": "index.html",
       "backend": "backend.py",
+      "source": "picoos",
       "path": "store/apps/guestbook",
       "size": 5235,
       "files": [
@@ -87,6 +90,7 @@
       "icon": "icon.svg",
       "color": "#14b8a6",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/hello-world",
       "size": 3653,
       "files": [
@@ -118,6 +122,7 @@
       "icon": "icon.svg",
       "color": "#fbbf24",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/notes",
       "size": 5604,
       "files": [
@@ -141,6 +146,7 @@
       "icon": "icon.svg",
       "color": "#22c55e",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/pico-control",
       "size": 6230,
       "files": [
@@ -164,6 +170,7 @@
       "icon": "icon.svg",
       "color": "#ec4899",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/pixel-paint",
       "size": 6491,
       "files": [
@@ -187,6 +194,7 @@
       "icon": "icon.svg",
       "color": "#6366f1",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/system-monitor",
       "size": 5143,
       "files": [
@@ -210,6 +218,7 @@
       "icon": "icon.svg",
       "color": "#10b981",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/todo",
       "size": 5532,
       "files": [
@@ -233,6 +242,7 @@
       "icon": "icon.svg",
       "color": "#0ea5e9",
       "entry": "index.html",
+      "source": "picoos",
       "path": "store/apps/weather",
       "size": 7062,
       "files": [
@@ -245,6 +255,913 @@
           "size": 6519
         }
       ]
+    },
+    {
+      "id": "2048",
+      "entry": "index.html",
+      "ref": "478b6ec346e3787f589e4af751378d06ded4cbbc",
+      "version": "478b6ec",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/gabrielecirulli/2048/478b6ec346e3787f589e4af751378d06ded4cbbc/",
+      "files": [
+        {
+          "path": "favicon.ico",
+          "size": 4286
+        },
+        {
+          "path": "index.html",
+          "size": 3988
+        },
+        {
+          "path": "js/animframe_polyfill.js",
+          "size": 890
+        },
+        {
+          "path": "js/application.js",
+          "size": 197
+        },
+        {
+          "path": "js/bind_polyfill.js",
+          "size": 220
+        },
+        {
+          "path": "js/classlist_polyfill.js",
+          "size": 1794
+        },
+        {
+          "path": "js/game_manager.js",
+          "size": 7627
+        },
+        {
+          "path": "js/grid.js",
+          "size": 2526
+        },
+        {
+          "path": "js/html_actuator.js",
+          "size": 4040
+        },
+        {
+          "path": "js/keyboard_input_manager.js",
+          "size": 4005
+        },
+        {
+          "path": "js/local_storage_manager.js",
+          "size": 1588
+        },
+        {
+          "path": "js/tile.js",
+          "size": 594
+        },
+        {
+          "path": "meta/apple-touch-icon.png",
+          "size": 5808
+        },
+        {
+          "path": "style/fonts/ClearSans-Bold-webfont.woff",
+          "size": 27120
+        },
+        {
+          "path": "style/fonts/ClearSans-Light-webfont.woff",
+          "size": 28700
+        },
+        {
+          "path": "style/fonts/ClearSans-Regular-webfont.woff",
+          "size": 26764
+        },
+        {
+          "path": "style/fonts/clear-sans.css",
+          "size": 1078
+        },
+        {
+          "path": "style/main.css",
+          "size": 20647
+        }
+      ],
+      "size": 141872,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": [\"meta/apple-touch-startup-*\", \"style/fonts/*.svg\"], \"include\": null, \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "2048",
+      "description": "The original sliding-tile puzzle by Gabriele Cirulli: join the numbers and reach the 2048 tile. Plays with arrow keys or swipes.",
+      "author": "gabrielecirulli",
+      "category": "Games",
+      "icon": "meta/apple-touch-icon.png",
+      "color": "",
+      "spa": false,
+      "source": "github",
+      "repo": "gabrielecirulli/2048",
+      "branch": "master",
+      "homepage": "https://github.com/gabrielecirulli/2048",
+      "license": "MIT",
+      "stars": 13475,
+      "pushed_at": "2024-10-24T13:06:19Z"
+    },
+    {
+      "id": "javascript-tetris",
+      "entry": "index.html",
+      "ref": "e5c0c42f7dac0f3514a55eff656c6e22e95d68ed",
+      "version": "e5c0c42",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/jakesgordon/javascript-tetris/e5c0c42f7dac0f3514a55eff656c6e22e95d68ed/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 17883
+        },
+        {
+          "path": "stats.js",
+          "size": 4103
+        },
+        {
+          "path": "texture.jpg",
+          "size": 44996
+        }
+      ],
+      "size": 66982,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "Falling Blocks",
+      "description": "Jake Gordon's classic falling-blocks game in a single HTML file with canvas graphics. Arrow keys to move and rotate.",
+      "author": "jakesgordon",
+      "category": "Games",
+      "icon": "🧱",
+      "color": "#8b5cf6",
+      "spa": false,
+      "source": "github",
+      "repo": "jakesgordon/javascript-tetris",
+      "branch": "master",
+      "homepage": "https://github.com/jakesgordon/javascript-tetris",
+      "license": "MIT",
+      "stars": 742,
+      "pushed_at": "2025-06-01T22:06:57Z"
+    },
+    {
+      "id": "javascript-pong",
+      "entry": "index.html",
+      "ref": "ca3240536e4f79ab7144388e56ed19de715b6662",
+      "version": "ca32405",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/jakesgordon/javascript-pong/ca3240536e4f79ab7144388e56ed19de715b6662/",
+      "files": [
+        {
+          "path": "game.js",
+          "size": 10108
+        },
+        {
+          "path": "images/press1.png",
+          "size": 2066
+        },
+        {
+          "path": "images/press2.png",
+          "size": 1928
+        },
+        {
+          "path": "images/winner.png",
+          "size": 768
+        },
+        {
+          "path": "index.html",
+          "size": 3029
+        },
+        {
+          "path": "pong.css",
+          "size": 1933
+        },
+        {
+          "path": "pong.js",
+          "size": 21945
+        },
+        {
+          "path": "sounds/goal.wav",
+          "size": 10690
+        },
+        {
+          "path": "sounds/ping.wav",
+          "size": 4700
+        },
+        {
+          "path": "sounds/pong.wav",
+          "size": 2220
+        },
+        {
+          "path": "sounds/wall.wav",
+          "size": 1068
+        }
+      ],
+      "size": 60455,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": [\"index.html\", \"game.js\", \"pong.js\", \"pong.css\", \"images/*\", \"sounds/*\"], \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "Pong",
+      "description": "Jake Gordon's take on the 1972 arcade classic, with sound effects and a computer opponent at several difficulty levels.",
+      "author": "jakesgordon",
+      "category": "Games",
+      "icon": "🏓",
+      "color": "#0ea5e9",
+      "spa": false,
+      "source": "github",
+      "repo": "jakesgordon/javascript-pong",
+      "branch": "master",
+      "homepage": "https://github.com/jakesgordon/javascript-pong",
+      "license": "MIT",
+      "stars": 222,
+      "pushed_at": "2025-06-01T22:16:19Z"
+    },
+    {
+      "id": "html5-asteroids",
+      "entry": "index.html",
+      "ref": "930301cbda83ed3b120f64b801d937d077ee2da0",
+      "version": "930301c",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/dmcinnes/HTML5-Asteroids/930301cbda83ed3b120f64b801d937d077ee2da0/",
+      "files": [
+        {
+          "path": "39459__THE_bizniss__laser.wav",
+          "size": 33970
+        },
+        {
+          "path": "51467__smcameron__missile_explosion.wav",
+          "size": 86508
+        },
+        {
+          "path": "game.js",
+          "size": 31273
+        },
+        {
+          "path": "index.html",
+          "size": 1177
+        },
+        {
+          "path": "ipad.js",
+          "size": 1367
+        },
+        {
+          "path": "jquery-1.4.1.min.js",
+          "size": 70843
+        },
+        {
+          "path": "vector_battle_regular.typeface.js",
+          "size": 27861
+        }
+      ],
+      "size": 252999,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "Vector Asteroids",
+      "description": "Pure JavaScript asteroid-blasting arcade game with vector graphics and sound by Doug McInnes.",
+      "author": "dmcinnes",
+      "category": "Games",
+      "icon": "☄️",
+      "color": "#334155",
+      "spa": false,
+      "source": "github",
+      "repo": "dmcinnes/HTML5-Asteroids",
+      "branch": "master",
+      "homepage": "https://github.com/dmcinnes/HTML5-Asteroids",
+      "license": "MIT",
+      "stars": 357,
+      "pushed_at": "2024-04-19T03:43:38Z"
+    },
+    {
+      "id": "fluid-simulation",
+      "entry": "index.html",
+      "ref": "a2d292931f19d9b3b9f564e23e6c32729d2121c3",
+      "version": "a2d2929",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/PavelDoGreat/WebGL-Fluid-Simulation/a2d292931f19d9b3b9f564e23e6c32729d2121c3/",
+      "files": [
+        {
+          "path": "LDR_LLL1_0.png",
+          "size": 7115
+        },
+        {
+          "path": "app_badge.png",
+          "size": 19300
+        },
+        {
+          "path": "dat.gui.min.js",
+          "size": 50149
+        },
+        {
+          "path": "gp_badge.png",
+          "size": 17944
+        },
+        {
+          "path": "iconfont.ttf",
+          "size": 2008
+        },
+        {
+          "path": "index.html",
+          "size": 6735
+        },
+        {
+          "path": "script.js",
+          "size": 51849
+        }
+      ],
+      "size": 155100,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": [\"index.html\", \"script.js\", \"dat.gui.min.js\", \"LDR_LLL1_0.png\", \"iconfont.ttf\", \"app_badge.png\", \"gp_badge.png\"], \"internet\": false, \"rename\": null, \"root\": null}",
+      "name": "Fluid Simulation",
+      "description": "Play with colourful, swirling fluids in your browser. A beautiful WebGL simulation by Pavel Dobryakov that also works on phones.",
+      "author": "PavelDoGreat",
+      "category": "Creativity",
+      "icon": "🌊",
+      "color": "#ec4899",
+      "spa": false,
+      "source": "github",
+      "repo": "PavelDoGreat/WebGL-Fluid-Simulation",
+      "branch": "master",
+      "homepage": "https://github.com/PavelDoGreat/WebGL-Fluid-Simulation",
+      "license": "MIT",
+      "stars": 16844,
+      "pushed_at": "2024-11-12T13:29:23Z"
+    },
+    {
+      "id": "qr-generator",
+      "entry": "index.html",
+      "ref": "04f46c6a0708418cb7b96fc563eacae0fbf77674",
+      "version": "04f46c6",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/davidshimjs/qrcodejs/04f46c6a0708418cb7b96fc563eacae0fbf77674/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1204
+        },
+        {
+          "path": "jquery.min.js",
+          "size": 93637
+        },
+        {
+          "path": "qrcode.js",
+          "size": 33168
+        }
+      ],
+      "size": 128009,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": [\"index.html\", \"jquery.min.js\", \"qrcode.js\"], \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "QR Code Generator",
+      "description": "Type any text or link and get a QR code instantly, generated entirely in your browser with qrcode.js by davidshimjs.",
+      "author": "davidshimjs",
+      "category": "Utilities",
+      "icon": "🔳",
+      "color": "#111827",
+      "spa": false,
+      "source": "github",
+      "repo": "davidshimjs/qrcodejs",
+      "branch": "master",
+      "homepage": "https://github.com/davidshimjs/qrcodejs",
+      "license": "MIT",
+      "stars": 14314,
+      "pushed_at": "2024-05-01T10:44:40Z"
+    },
+    {
+      "id": "sudoku",
+      "entry": "demo/index.html",
+      "ref": "4362a13510925f03a2f749b4657a8e4c5f36a869",
+      "version": "4362a13",
+      "root": "",
+      "base": "https://raw.githubusercontent.com/robatron/sudoku.js/4362a13510925f03a2f749b4657a8e4c5f36a869/",
+      "files": [
+        {
+          "path": "demo/assets/css/bootstrap-responsive.min.css",
+          "size": 16553
+        },
+        {
+          "path": "demo/assets/css/bootstrap.min.css",
+          "size": 103309
+        },
+        {
+          "path": "demo/assets/css/styles.css",
+          "size": 753
+        },
+        {
+          "path": "demo/assets/ico/apple-touch-icon-114-precomposed.png",
+          "size": 6043
+        },
+        {
+          "path": "demo/assets/ico/apple-touch-icon-144-precomposed.png",
+          "size": 8457
+        },
+        {
+          "path": "demo/assets/ico/apple-touch-icon-57-precomposed.png",
+          "size": 2260
+        },
+        {
+          "path": "demo/assets/ico/apple-touch-icon-72-precomposed.png",
+          "size": 3204
+        },
+        {
+          "path": "demo/assets/ico/favicon.ico",
+          "size": 1150
+        },
+        {
+          "path": "demo/assets/img/glyphicons-halflings-white.png",
+          "size": 0
+        },
+        {
+          "path": "demo/assets/img/glyphicons-halflings.png",
+          "size": 12799
+        },
+        {
+          "path": "demo/assets/img/pacman.gif",
+          "size": 1928
+        },
+        {
+          "path": "demo/assets/js/app.js",
+          "size": 9390
+        },
+        {
+          "path": "demo/assets/js/bootstrap.min.js",
+          "size": 31596
+        },
+        {
+          "path": "demo/assets/js/html5shiv-pre3.6.js",
+          "size": 2394
+        },
+        {
+          "path": "demo/assets/js/jquery.min.js",
+          "size": 93068
+        },
+        {
+          "path": "demo/index.html",
+          "size": 6716
+        },
+        {
+          "path": "sudoku.js",
+          "size": 27203
+        }
+      ],
+      "size": 326823,
+      "internet": false,
+      "spec": "{\"entry\": \"demo/index.html\", \"exclude\": null, \"include\": [\"demo/*\", \"sudoku.js\"], \"internet\": null, \"rename\": null, \"root\": null}",
+      "name": "Sudoku",
+      "description": "Generate Sudoku puzzles at different difficulties, get hints with candidate numbers or let the solver finish it. Demo of robatron's sudoku.js.",
+      "author": "robatron",
+      "category": "Games",
+      "icon": "🔢",
+      "color": "#2563eb",
+      "spa": false,
+      "source": "github",
+      "repo": "robatron/sudoku.js",
+      "branch": "master",
+      "homepage": "https://github.com/robatron/sudoku.js",
+      "license": "MIT",
+      "stars": 499,
+      "pushed_at": "2025-12-17T23:02:12Z"
+    },
+    {
+      "id": "drawing-app",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "drawing-app",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/drawing-app/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 582
+        },
+        {
+          "path": "script.js",
+          "size": 1690
+        },
+        {
+          "path": "style.css",
+          "size": 783
+        }
+      ],
+      "size": 3055,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"drawing-app\"}",
+      "name": "Sketch Pad",
+      "description": "A minimal drawing canvas with adjustable brush size and colour. From Brad Traversy's 50 Projects in 50 Days.",
+      "author": "bradtraversy",
+      "category": "Creativity",
+      "icon": "✏️",
+      "color": "#f59e0b",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/drawing-app",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "password-generator",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "password-generator",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/password-generator/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1696
+        },
+        {
+          "path": "script.js",
+          "size": 2163
+        },
+        {
+          "path": "style.css",
+          "size": 1393
+        }
+      ],
+      "size": 5252,
+      "internet": true,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"password-generator\"}",
+      "name": "Password Generator",
+      "description": "Create strong random passwords with your choice of length, upper/lower case, numbers and symbols, and copy them with one click.",
+      "author": "bradtraversy",
+      "category": "Utilities",
+      "icon": "🔑",
+      "color": "#3b82f6",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/password-generator",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "theme-clock",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "theme-clock",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/theme-clock/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 753
+        },
+        {
+          "path": "script.js",
+          "size": 1962
+        },
+        {
+          "path": "style.css",
+          "size": 2242
+        }
+      ],
+      "size": 4957,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"theme-clock\"}",
+      "name": "Analog Clock",
+      "description": "An elegant analog and digital clock with a light/dark theme toggle. From 50 Projects in 50 Days.",
+      "author": "bradtraversy",
+      "category": "Information",
+      "icon": "🕰️",
+      "color": "#64748b",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/theme-clock",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "drink-water",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "drink-water",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/drink-water/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1046
+        },
+        {
+          "path": "script.js",
+          "size": 1462
+        },
+        {
+          "path": "style.css",
+          "size": 1685
+        }
+      ],
+      "size": 4193,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"drink-water\"}",
+      "name": "Drink Water",
+      "description": "Track how many glasses of water you drank today toward your 2-litre goal with a filling cup.",
+      "author": "bradtraversy",
+      "category": "Productivity",
+      "icon": "💧",
+      "color": "#0284c7",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/drink-water",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "insect-catch-game",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "insect-catch-game",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/insect-catch-game/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1826
+        },
+        {
+          "path": "script.js",
+          "size": 2223
+        },
+        {
+          "path": "style.css",
+          "size": 2168
+        }
+      ],
+      "size": 6217,
+      "internet": true,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"insect-catch-game\"}",
+      "name": "Catch the Insect",
+      "description": "Pick your favourite insect and catch as many as you can before they take over the screen. Insect pictures are loaded from the web.",
+      "author": "bradtraversy",
+      "category": "Games",
+      "icon": "🐞",
+      "color": "#16a34a",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/insect-catch-game",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "quiz-app",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "quiz-app",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/quiz-app/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1138
+        },
+        {
+          "path": "script.js",
+          "size": 2415
+        },
+        {
+          "path": "style.css",
+          "size": 1075
+        }
+      ],
+      "size": 4628,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"quiz-app\"}",
+      "name": "Quiz",
+      "description": "A small multiple-choice quiz with score at the end. Edit the questions in script.js to make your own.",
+      "author": "bradtraversy",
+      "category": "Games",
+      "icon": "❓",
+      "color": "#7c3aed",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/quiz-app",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "random-choice-picker",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "random-choice-picker",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/random-choice-picker/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 557
+        },
+        {
+          "path": "script.js",
+          "size": 1448
+        },
+        {
+          "path": "style.css",
+          "size": 837
+        }
+      ],
+      "size": 2842,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"random-choice-picker\"}",
+      "name": "Random Picker",
+      "description": "Can't decide? Type your choices separated by commas, press Enter and let it pick one at random.",
+      "author": "bradtraversy",
+      "category": "Utilities",
+      "icon": "🎲",
+      "color": "#db2777",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/random-choice-picker",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "sound-board",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "sound-board",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/sound-board/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 658
+        },
+        {
+          "path": "script.js",
+          "size": 546
+        },
+        {
+          "path": "sounds/applause.mp3",
+          "size": 62760
+        },
+        {
+          "path": "sounds/boo.mp3",
+          "size": 46680
+        },
+        {
+          "path": "sounds/gasp.mp3",
+          "size": 10152
+        },
+        {
+          "path": "sounds/tada.mp3",
+          "size": 46392
+        },
+        {
+          "path": "sounds/victory.mp3",
+          "size": 68126
+        },
+        {
+          "path": "sounds/wrong.mp3",
+          "size": 1560
+        },
+        {
+          "path": "style.css",
+          "size": 637
+        }
+      ],
+      "size": 237511,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"sound-board\"}",
+      "name": "Sound Board",
+      "description": "Six buttons, six sounds: applause, boo, gasp, tada, victory and wrong. Perfect for game nights.",
+      "author": "bradtraversy",
+      "category": "Fun",
+      "icon": "🔊",
+      "color": "#ea580c",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/sound-board",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "event-keycodes",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "event-keycodes",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/event-keycodes/",
+      "files": [
+        {
+          "path": "style.css",
+          "size": 777,
+          "src": "dark-style.css"
+        },
+        {
+          "path": "index.html",
+          "size": 415
+        },
+        {
+          "path": "script.js",
+          "size": 373
+        }
+      ],
+      "size": 1565,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": {\"dark-style.css\": \"style.css\"}, \"root\": \"event-keycodes\"}",
+      "name": "Key Codes",
+      "description": "Press any key to see its event.key, event.keyCode and event.code values. Handy for web developers.",
+      "author": "bradtraversy",
+      "category": "Developer",
+      "icon": "⌨️",
+      "color": "#475569",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/event-keycodes",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "dad-jokes",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "dad-jokes",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/dad-jokes/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 498
+        },
+        {
+          "path": "script.js",
+          "size": 731
+        },
+        {
+          "path": "style.css",
+          "size": 1052
+        }
+      ],
+      "size": 2281,
+      "internet": true,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"dad-jokes\"}",
+      "name": "Dad Jokes",
+      "description": "A random dad joke at the press of a button, fetched from icanhazdadjoke.com.",
+      "author": "bradtraversy",
+      "category": "Fun",
+      "icon": "😄",
+      "color": "#9333ea",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/dad-jokes",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
+    },
+    {
+      "id": "expanding-cards",
+      "entry": "index.html",
+      "ref": "c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481",
+      "version": "c92b0bc",
+      "root": "expanding-cards",
+      "base": "https://raw.githubusercontent.com/bradtraversy/50projects50days/c92b0bc3a87fc95d44b89552b7b6a2eeb36ca481/expanding-cards/",
+      "files": [
+        {
+          "path": "index.html",
+          "size": 1540
+        },
+        {
+          "path": "script.js",
+          "size": 313
+        },
+        {
+          "path": "style.css",
+          "size": 946
+        }
+      ],
+      "size": 2799,
+      "internet": false,
+      "spec": "{\"entry\": null, \"exclude\": null, \"include\": null, \"internet\": null, \"rename\": null, \"root\": \"expanding-cards\"}",
+      "name": "Photo Cards",
+      "description": "A gallery of expanding photo cards - click one to open it. Photos are loaded from Unsplash.",
+      "author": "bradtraversy",
+      "category": "Fun",
+      "icon": "🖼️",
+      "color": "#0d9488",
+      "spa": false,
+      "source": "github",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "homepage": "https://github.com/bradtraversy/50projects50days/tree/master/expanding-cards",
+      "license": "MIT",
+      "stars": 40641,
+      "pushed_at": "2025-02-26T13:49:39Z"
     }
   ]
 }

@@ -22,7 +22,7 @@ jobs:
       - name: Syntax check
         run: python -m compileall -q firmware tools tests store
       - name: App Store catalog is up to date
-        run: python tools/build_catalog.py --check
+        run: python tools/update_store.py --check
       - name: Smoke test
         run: python tests/smoke_test.py
 

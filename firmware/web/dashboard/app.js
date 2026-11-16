@@ -95,7 +95,7 @@
     clock: null, // { unix, offset, at }
     catalog: null,
     community: null,
-    storeTab: "official",
+    storeTab: "all",
     storeCat: "All",
     installing: {},
   };
@@ -292,7 +292,7 @@
   function showDetails(id) {
     const a = S.apps.find((x) => x.id === id);
     if (!a) return;
-    const src = { store: "Official App Store", community: "Community (GitHub)", upload: "Uploaded by you" }[a.source] || a.source;
+    const src = { store: "PicoOS App Store", picoos: "PicoOS App Store", github: "Open source on GitHub", community: "Community (GitHub)", upload: "Uploaded by you" }[a.source] || a.source;
     $("#detailBody").innerHTML = `
       <div class="sheet-head"><div class="detail-top">${appIconHTML(a, a.has_icon_file ? `/api/apps/${encodeURIComponent(a.id)}/icon` : null)}
         <div><h2>${esc(a.name)}</h2><div class="muted">v${esc(a.version)}${a.author ? " · " + esc(a.author) : ""}</div></div></div>
@@ -304,6 +304,8 @@
         <dt>Size</dt><dd>${fmtBytes(a.size)}</dd>
         <dt>Source</dt><dd>${esc(src)}${a.repo ? ` · <a href="https://github.com/${esc(a.repo)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(a.repo)}</a>` : ""}</dd>
         <dt>Category</dt><dd>${esc(a.category || "–")}</dd>
+        ${a.license ? `<dt>License</dt><dd>${esc(a.license)}</dd>` : ""}
+        ${a.source === "github" || a.source === "community" ? `<dt>Version</dt><dd>commit ${esc(a.version)}</dd>` : ""}
         ${a.backend ? `<dt>Backend</dt><dd>${esc(a.backend)} (MicroPython)</dd>` : ""}
       </dl>
       <div class="detail-actions">
@@ -351,32 +353,32 @@
   const rawBase = (repo, branch) => `https://raw.githubusercontent.com/${repo}/${branch}`;
   const WEB_EXT = /\.(html?|css|m?js|json|svg|png|jpe?g|gif|webp|ico|woff2?|ttf|txt|wasm|mp3|wav|ogg|webmanifest|csv|xml|gz|py|md)$/i;
 
+  // The catalog lists PicoOS apps (store/apps/ in the store repo) and open-source
+  // apps that live in their own GitHub repos (pinned to a commit, see tools/update_store.py).
   async function loadCatalog(force) {
     const { store_repo: repo = "GokalpHizmetleri/PicoOS", store_branch: branch = "main" } = settings();
-    const key = `catalog:${repo}@${branch}`;
+    const key = `catalog2:${repo}@${branch}`;
     const cached = ls.get(key);
     if (!force && cached && Date.now() - cached.t < 10 * 60e3) return cached.d;
     const r = await fetch(`${rawBase(repo, branch)}/store/catalog.json?t=${Date.now()}`, { cache: "no-store" });
     if (!r.ok) throw new Error(`Catalog not found (${r.status}) in ${repo}@${branch}`);
     const cat = await r.json();
-    const base = rawBase(repo, branch);
-    const apps = (cat.apps || []).map((a) => ({
-      ...a,
-      source: "store",
-      repo: `${repo}`,
-      iconUrl: a.icon && a.icon.includes(".") ? `${base}/${a.path}/${a.icon}` : null,
-      fileUrl: (p) => `${base}/${a.path}/${p}`,
-    }));
+    const apps = (cat.apps || []).map((a) => {
+      const base = a.base || `${rawBase(repo, branch)}/${a.path}/`;
+      return {
+        ...a,
+        source: a.source === "github" ? "github" : "picoos",
+        repo: a.repo || repo,
+        homepage: a.homepage || `https://github.com/${repo}/tree/${branch}/${a.path}`,
+        base,
+        iconUrl: a.icon && a.icon.includes(".") ? base + a.icon : null,
+      };
+    });
     const d = { apps, updated: cat.updated };
-    ls.set(key, { t: Date.now(), d: { ...d, apps: apps.map(({ fileUrl, ...x }) => x) } });
+    ls.set(key, { t: Date.now(), d });
     return d;
   }
-  function hydrateCatalog(d) {
-    const { store_repo: repo = "GokalpHizmetleri/PicoOS", store_branch: branch = "main" } = settings();
-    const base = rawBase(repo, branch);
-    d.apps.forEach((a) => { if (!a.fileUrl) a.fileUrl = (p) => `${base}/${a.path}/${p}`; });
-    return d;
-  }
+  const fmtStars = (n) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k" : String(n));
 
   async function loadCommunity(force) {
     const cached = ls.get("community");
@@ -441,13 +443,13 @@
     msg.hidden = true;
     const tab = S.storeTab;
     $$("#storeTabs .tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tab));
-    const data = tab === "official" ? S.catalog : S.community;
-    if (!data || force) {
+    const raw = tab === "community" ? S.community : S.catalog;
+    if (!raw || force) {
       grid.innerHTML = Array(6).fill('<div class="skeleton"></div>').join("");
       $("#storeCats").innerHTML = "";
       try {
-        if (tab === "official") S.catalog = hydrateCatalog(await loadCatalog(force));
-        else S.community = await loadCommunity(force);
+        if (tab === "community") S.community = await loadCommunity(force);
+        else S.catalog = await loadCatalog(force);
       } catch (e) {
         grid.innerHTML = "";
         msg.hidden = false;
@@ -457,12 +459,14 @@
       }
       return renderStore();
     }
-    const list = data.apps;
+    const data = raw;
+    const list = tab === "github" ? raw.apps.filter((a) => a.source === "github")
+      : tab === "picoos" ? raw.apps.filter((a) => a.source === "picoos") : raw.apps;
     const cats = ["All", ...new Set(list.map((a) => a.category || "Other"))];
     if (!cats.includes(S.storeCat)) S.storeCat = "All";
     $("#storeCats").innerHTML = cats.map((c) => `<button class="chip ${c === S.storeCat ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
     const total = S.status ? S.status.system.storage.total : 0;
-    $("#storeFree").innerHTML = `${list.length} apps · <b>${fmtBytes(S.free)}</b> free on your Pico` + (tab === "official" && data.updated ? ` · catalog updated ${esc(new Date(data.updated).toLocaleDateString())}` : "") + (tab === "community" ? ` · public GitHub repos tagged <code>picoos-app</code>` : "");
+    $("#storeFree").innerHTML = `${list.length} apps · <b>${fmtBytes(S.free)}</b> free on your Pico` + (tab !== "community" && data.updated ? ` · catalog updated ${esc(new Date(data.updated).toLocaleDateString())}` : "") + (tab === "community" ? ` · public GitHub repos tagged <code>picoos-app</code>` : "");
     const q = $("#storeSearch").value.trim().toLowerCase();
     const shown = list.filter((a) => (S.storeCat === "All" || (a.category || "Other") === S.storeCat) && (!q || `${a.name} ${a.description} ${a.author}`.toLowerCase().includes(q)));
     if (!shown.length) {
@@ -485,12 +489,15 @@
       else if (inst && inst.version === a.version) btn = `<button class="btn glass sm" data-openapp="${esc(a.id)}">Open</button>`;
       else if (!fits) btn = `<button class="btn glass sm" disabled>${tooBig ? "Too big" : "No space"}</button>`;
       else btn = `<button class="btn primary sm" data-install="${esc(a.id)}">${inst ? "Update" : "Install"}</button>`;
+      const gh = a.source === "github" || a.source === "community";
+      const by = a.source === "picoos" ? `PicoOS · v${esc(a.version)}`
+        : `<a href="${esc(a.homepage || "https://github.com/" + a.repo)}" target="_blank" rel="noopener" class="store-link">${esc(a.repo)}</a>`;
       return `<article class="store-card">
         <div class="store-top">${appIconHTML(a, a.iconUrl)}
-          <div style="min-width:0"><div class="store-title">${esc(a.name)}</div><div class="store-by">${esc(a.author || "Unknown")} · v${esc(a.version)}</div></div></div>
+          <div style="min-width:0"><div class="store-title">${esc(a.name)}</div><div class="store-by">${by}</div></div></div>
         <p class="store-desc">${esc(a.description)}</p>
         <div class="store-foot">
-          <div class="tags"><span class="tag ${fits ? "ok" : "bad"}">${fmtBytes(a.size)}</span>${a.backend ? '<span class="tag">Python backend</span>' : ""}${a.stars != null ? `<span class="tag star">★ ${a.stars}</span>` : ""}${inst ? '<span class="tag">Installed</span>' : ""}</div>
+          <div class="tags"><span class="tag ${fits ? "ok" : "bad"}" title="Download size">${fmtBytes(a.size)}</span>${gh ? `<span class="tag gh" title="Open source on GitHub">${icon("github").replace("<svg", '<svg width="11" height="11"')} ★ ${fmtStars(a.stars || 0)}</span>` : '<span class="tag pico">Made for PicoOS</span>'}${a.license ? `<span class="tag">${esc(a.license)}</span>` : ""}${a.internet ? '<span class="tag warn" title="Loads content from the internet when used">Needs internet</span>' : ""}${a.backend ? '<span class="tag">Python backend</span>' : ""}${inst ? `<span class="tag">${inst.version === a.version ? "Installed" : "Update available"}</span>` : ""}</div>
           <div style="min-width:84px;display:flex;justify-content:flex-end">${btn}</div>
         </div></article>`;
     }).join("");
@@ -514,22 +521,22 @@
     if (o) { const a = S.apps.find((x) => x.id === o.dataset.openapp); if (a) window.open(appUrl(a), "_blank", "noopener"); return; }
     const b = e.target.closest("[data-install]");
     if (!b) return;
-    const list = (S.storeTab === "official" ? S.catalog : S.community).apps;
+    const list = (S.storeTab === "community" ? S.community : S.catalog).apps;
     const a = list.find((x) => x.id === b.dataset.install);
     if (!a) return;
     S.installing[a.id] = 0.01;
     renderStore();
-    const urlFor = a.source === "community" ? (p) => a.base + p : a.fileUrl;
+    const urlFor = (p) => a.base + p.split("/").map(encodeURIComponent).join("/");
     const files = (a.files || []).map((f) => ({
       path: f.path, size: f.size,
       get: async () => {
-        const r = await fetch(urlFor(f.path), { cache: "no-store" });
+        const r = await fetch(urlFor(f.src || f.path), { cache: "no-store" });
         if (!r.ok) throw new Error(`Download failed: ${f.path} (${r.status})`);
         return r.blob();
       },
     }));
     try {
-      const meta = { id: a.id, name: a.name, version: a.version, description: a.description, author: a.author, icon: a.icon, color: a.color, category: a.category, entry: a.entry, backend: a.backend, spa: a.spa, source: a.source, repo: a.repo, homepage: a.homepage };
+      const meta = { id: a.id, name: a.name, version: a.version, description: a.description, author: a.author, icon: a.icon, color: a.color, category: a.category, entry: a.entry, backend: a.backend, spa: a.spa, source: a.source, repo: a.repo, homepage: a.homepage, license: a.license, internet: !!a.internet };
       const app = await installPackage(meta, files, (p) => { S.installing[a.id] = Math.max(0.03, p); renderStore(); });
       toast(`${a.name} installed on port ${app.port}`);
     } catch (err) {

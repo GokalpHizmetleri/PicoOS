@@ -1,0 +1,240 @@
+{
+  "_comment": "Open-source web apps that live in their own GitHub repositories. tools/update_store.py pins each one to the latest commit of its branch, lists the files a browser needs and writes them into store/catalog.json. CI refreshes this every day. Fields: id, repo, branch, root (subfolder), entry, include/exclude (glob patterns, relative to root), name, description, category, icon (file in the app or an emoji), color, internet (override the auto-detection), rename ({\"file-in-repo\": \"name-the-page-expects\"}, for upstream naming mistakes).",
+  "github": [
+    {
+      "id": "2048",
+      "repo": "gabrielecirulli/2048",
+      "branch": "master",
+      "name": "2048",
+      "description": "The original sliding-tile puzzle by Gabriele Cirulli: join the numbers and reach the 2048 tile. Plays with arrow keys or swipes.",
+      "category": "Games",
+      "icon": "meta/apple-touch-icon.png",
+      "exclude": [
+        "meta/apple-touch-startup-*",
+        "style/fonts/*.svg"
+      ]
+    },
+    {
+      "id": "javascript-tetris",
+      "repo": "jakesgordon/javascript-tetris",
+      "branch": "master",
+      "name": "Falling Blocks",
+      "description": "Jake Gordon's classic falling-blocks game in a single HTML file with canvas graphics. Arrow keys to move and rotate.",
+      "category": "Games",
+      "icon": "🧱",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "javascript-pong",
+      "repo": "jakesgordon/javascript-pong",
+      "branch": "master",
+      "name": "Pong",
+      "description": "Jake Gordon's take on the 1972 arcade classic, with sound effects and a computer opponent at several difficulty levels.",
+      "category": "Games",
+      "icon": "🏓",
+      "color": "#0ea5e9",
+      "include": [
+        "index.html",
+        "game.js",
+        "pong.js",
+        "pong.css",
+        "images/*",
+        "sounds/*"
+      ]
+    },
+    {
+      "id": "html5-asteroids",
+      "repo": "dmcinnes/HTML5-Asteroids",
+      "branch": "master",
+      "name": "Vector Asteroids",
+      "description": "Pure JavaScript asteroid-blasting arcade game with vector graphics and sound by Doug McInnes.",
+      "category": "Games",
+      "icon": "☄️",
+      "color": "#334155"
+    },
+    {
+      "id": "fluid-simulation",
+      "repo": "PavelDoGreat/WebGL-Fluid-Simulation",
+      "branch": "master",
+      "name": "Fluid Simulation",
+      "description": "Play with colourful, swirling fluids in your browser. A beautiful WebGL simulation by Pavel Dobryakov that also works on phones.",
+      "category": "Creativity",
+      "icon": "🌊",
+      "color": "#ec4899",
+      "include": [
+        "index.html",
+        "script.js",
+        "dat.gui.min.js",
+        "LDR_LLL1_0.png",
+        "iconfont.ttf",
+        "app_badge.png",
+        "gp_badge.png"
+      ],
+      "internet": false
+    },
+    {
+      "id": "qr-generator",
+      "repo": "davidshimjs/qrcodejs",
+      "branch": "master",
+      "name": "QR Code Generator",
+      "description": "Type any text or link and get a QR code instantly, generated entirely in your browser with qrcode.js by davidshimjs.",
+      "category": "Utilities",
+      "icon": "🔳",
+      "color": "#111827",
+      "include": [
+        "index.html",
+        "jquery.min.js",
+        "qrcode.js"
+      ]
+    },
+    {
+      "id": "sudoku",
+      "repo": "robatron/sudoku.js",
+      "branch": "master",
+      "entry": "demo/index.html",
+      "name": "Sudoku",
+      "description": "Generate Sudoku puzzles at different difficulties, get hints with candidate numbers or let the solver finish it. Demo of robatron's sudoku.js.",
+      "category": "Games",
+      "icon": "🔢",
+      "color": "#2563eb",
+      "include": [
+        "demo/*",
+        "sudoku.js"
+      ]
+    },
+    {
+      "id": "drawing-app",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "drawing-app",
+      "name": "Sketch Pad",
+      "description": "A minimal drawing canvas with adjustable brush size and colour. From Brad Traversy's 50 Projects in 50 Days.",
+      "category": "Creativity",
+      "icon": "✏️",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "password-generator",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "password-generator",
+      "name": "Password Generator",
+      "description": "Create strong random passwords with your choice of length, upper/lower case, numbers and symbols, and copy them with one click.",
+      "category": "Utilities",
+      "icon": "🔑",
+      "color": "#3b82f6"
+    },
+    {
+      "id": "theme-clock",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "theme-clock",
+      "name": "Analog Clock",
+      "description": "An elegant analog and digital clock with a light/dark theme toggle. From 50 Projects in 50 Days.",
+      "category": "Information",
+      "icon": "🕰️",
+      "color": "#64748b"
+    },
+    {
+      "id": "drink-water",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "drink-water",
+      "name": "Drink Water",
+      "description": "Track how many glasses of water you drank today toward your 2-litre goal with a filling cup.",
+      "category": "Productivity",
+      "icon": "💧",
+      "color": "#0284c7"
+    },
+    {
+      "id": "insect-catch-game",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "insect-catch-game",
+      "name": "Catch the Insect",
+      "description": "Pick your favourite insect and catch as many as you can before they take over the screen. Insect pictures are loaded from the web.",
+      "category": "Games",
+      "icon": "🐞",
+      "color": "#16a34a"
+    },
+    {
+      "id": "quiz-app",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "quiz-app",
+      "name": "Quiz",
+      "description": "A small multiple-choice quiz with score at the end. Edit the questions in script.js to make your own.",
+      "category": "Games",
+      "icon": "❓",
+      "color": "#7c3aed"
+    },
+    {
+      "id": "random-choice-picker",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "random-choice-picker",
+      "name": "Random Picker",
+      "description": "Can't decide? Type your choices separated by commas, press Enter and let it pick one at random.",
+      "category": "Utilities",
+      "icon": "🎲",
+      "color": "#db2777"
+    },
+    {
+      "id": "sound-board",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "sound-board",
+      "name": "Sound Board",
+      "description": "Six buttons, six sounds: applause, boo, gasp, tada, victory and wrong. Perfect for game nights.",
+      "category": "Fun",
+      "icon": "🔊",
+      "color": "#ea580c"
+    },
+    {
+      "id": "event-keycodes",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "event-keycodes",
+      "name": "Key Codes",
+      "description": "Press any key to see its event.key, event.keyCode and event.code values. Handy for web developers.",
+      "category": "Developer",
+      "icon": "⌨️",
+      "color": "#475569",
+      "rename": {
+        "dark-style.css": "style.css"
+      }
+    },
+    {
+      "id": "dad-jokes",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "dad-jokes",
+      "name": "Dad Jokes",
+      "description": "A random dad joke at the press of a button, fetched from icanhazdadjoke.com.",
+      "category": "Fun",
+      "icon": "😄",
+      "color": "#9333ea"
+    },
+    {
+      "id": "expanding-cards",
+      "repo": "bradtraversy/50projects50days",
+      "branch": "master",
+      "root": "expanding-cards",
+      "name": "Photo Cards",
+      "description": "A gallery of expanding photo cards - click one to open it. Photos are loaded from Unsplash.",
+      "category": "Fun",
+      "icon": "🖼️",
+      "color": "#0d9488"
+    }
+  ],
+  "discover": {
+    "category": "Discovered",
+    "max": 12,
+    "per_query": 15,
+    "queries": [
+      "topic:picoos-app",
+      "topic:html5-game topic:vanilla-javascript stars:>100 size:<3000",
+      "topic:vanilla-js topic:game stars:>200 size:<3000"
+    ]
+  }
+}

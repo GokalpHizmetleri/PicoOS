@@ -59,11 +59,18 @@ Click **App Store** in the top bar.
 
 <img src="images/app-store.webp" alt="App Store">
 
-- **Official:** apps from the `store/` folder of the PicoOS GitHub repository. The catalog is rebuilt
-  automatically whenever an app is added or updated there.
-- **Community:** public GitHub repositories with the topic **`picoos-app`**. Apps larger than
-  1.5 MB are hidden because they won't fit.
-- Filter by category, or search by name, description or author.
+The store has four tabs:
+
+| Tab | What's in it |
+|---|---|
+| **All** | Everything in the catalog |
+| **Open source** | Real open-source web apps and games that live in **their own GitHub repositories**: 2048, Sudoku, Pong, a WebGL fluid simulation, a QR code generator and more. Each card links to the project, and shows its stars and license. |
+| **PicoOS** | Apps made for PicoOS that use the SDK (notes and tasks stored on the Pico, Pico Control, System Monitor…) |
+| **Community** | Public GitHub repositories with the topic **`picoos-app`**, found live. Apps larger than 1.5 MB are hidden because they won't fit. |
+
+The catalog is refreshed from GitHub **every day**. When an open-source project gets new commits,
+its card shows **Update available**. Cards tagged **Needs internet** load some content (pictures,
+jokes, icons) from the web while you use them; everything else works offline once installed.
 
 Every card shows the app's size. The size tag is **green** when it fits in the Pico's free space and
 **red** when it doesn't. The button changes to match:
@@ -76,8 +83,9 @@ Every card shows the app's size. The size tag is **green** when it fits in the P
 | **No space** | Not enough free flash; uninstall something first |
 | **Too big** | Bigger than the Pico's whole storage |
 
-When you click **Install**, *your browser* downloads the app's files from GitHub and uploads them
-to the Pico, with a progress bar on the card. The browser therefore needs internet access; the Pico
+When you click **Install**, *your browser* downloads the app's files from GitHub (for open-source
+apps: straight from the project's repository, at the exact commit listed in the catalog) and uploads
+them to the Pico, with a progress bar on the card. The browser therefore needs internet access; the Pico
 itself only talks to your local network during the install. When the install finishes, the app
 appears on the home screen and is already running.
 

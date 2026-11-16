@@ -37,10 +37,15 @@ async function waitUp(url) {
 async function install(base, id) {
   const cat = JSON.parse(fs.readFileSync(path.join(ROOT, "store", "catalog.json"), "utf8"));
   const a = cat.apps.find((x) => x.id === id);
-  const meta = { id: a.id, name: a.name, version: a.version, description: a.description, icon: a.icon, color: a.color, entry: a.entry, backend: a.backend, category: a.category, author: a.author, source: "store", repo: "GokalpHizmetleri/PicoOS", size: a.size, files: a.files.length };
+  const meta = { ...a, repo: a.repo || "GokalpHizmetleri/PicoOS", size: a.size, files: a.files.length };
   await fetch(base + "/api/apps/install/begin", { method: "POST", body: JSON.stringify(meta) });
   for (const f of a.files) {
-    await fetch(`${base}/api/apps/install/file?id=${id}&path=${encodeURIComponent(f.path)}`, { method: "PUT", body: fs.readFileSync(path.join(ROOT, a.path, f.path)) });
+    let body;
+    if (a.source === "github") {
+      const r = await fetch(a.base + (f.src || f.path).split("/").map(encodeURIComponent).join("/"));
+      body = Buffer.from(await r.arrayBuffer());
+    } else body = fs.readFileSync(path.join(ROOT, a.path, f.path));
+    await fetch(`${base}/api/apps/install/file?id=${id}&path=${encodeURIComponent(f.path)}`, { method: "PUT", body });
   }
   await fetch(base + "/api/apps/install/commit", { method: "POST", body: JSON.stringify({ id }) });
 }
@@ -48,7 +53,9 @@ async function install(base, id) {
 async function serveGithubLocally(context) {
   await context.route("https://raw.githubusercontent.com/**", async (route) => {
     const u = new URL(route.request().url());
-    const parts = u.pathname.split("/").slice(4); // /owner/repo/branch/...
+    const seg = u.pathname.split("/");
+    if (`${seg[1]}/${seg[2]}`.toLowerCase() !== "gokalphizmetleri/picoos") return route.continue(); // real upstream repos
+    const parts = seg.slice(4); // /owner/repo/branch/...
     const file = path.join(ROOT, ...parts);
     if (!file.startsWith(ROOT) || !fs.existsSync(file)) return route.fulfill({ status: 404, body: "not found" });
     const type = file.endsWith(".json") ? "application/json" : file.endsWith(".svg") ? "image/svg+xml" : file.endsWith(".html") ? "text/html" : "application/octet-stream";
@@ -66,7 +73,7 @@ async function serveGithubLocally(context) {
   try {
     await waitUp(base + "/api/status");
     await waitUp(`http://localhost:${SETUP}/api/setup/state`);
-    for (const id of ["notes", "todo", "pixel-paint", "weather", "pico-control", "system-monitor", "focus-timer", "calculator", "guestbook"]) await install(base, id);
+    for (const id of ["notes", "2048", "fluid-simulation", "todo", "sudoku", "weather", "pico-control", "system-monitor", "qr-generator", "pixel-paint", "javascript-pong", "focus-timer"]) await install(base, id);
     await fetch(base + "/api/settings", { method: "POST", body: JSON.stringify({ device_name: "Living Room Pico" }) });
 
     const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, colorScheme: "dark" });
@@ -84,7 +91,9 @@ async function serveGithubLocally(context) {
 
     await page.click("#btnStore");
     await page.waitForSelector(".store-card");
-    await shot("app-store.png", { wait: 1200 });
+    await page.click('#storeTabs [data-tab="github"]');
+    await page.waitForSelector(".store-card");
+    await shot("app-store.png", { wait: 2500 });
     await page.keyboard.press("Escape");
 
     await page.click("#btnUpload");
@@ -146,5 +155,5 @@ async function serveGithubLocally(context) {
     fs.rmSync(setup.fsDir, { recursive: true, force: true });
   }
 })().catch((e) => { console.error(e); process.exit(1); });
-// Note: the committed images are converted to WebP (quality 88) to keep the repository small:
+// After running, convert the PNGs (see below). The committed images are converted to WebP (quality 88) to keep the repository small:
 //   python3 -c "from PIL import Image;import glob,os;[ (Image.open(p).convert('RGB').save(p[:-4]+'.webp',quality=88,method=6),os.remove(p)) for p in glob.glob('docs/images/*.png')]"

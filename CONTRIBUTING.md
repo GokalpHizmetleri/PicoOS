@@ -6,7 +6,7 @@ Thanks for helping! Contributions of all sizes are welcome: bug reports, docs, s
 
 See [docs/app-development.md → Publishing your app](docs/app-development.md#publishing-your-app).
 In short: add `store/apps/<id>/` with a `picoos.json` and an `icon.svg`, run
-`python3 tools/build_catalog.py`, and open a pull request.
+`python3 tools/update_store.py --offline`, and open a pull request.
 
 ## Working on PicoOS itself
 

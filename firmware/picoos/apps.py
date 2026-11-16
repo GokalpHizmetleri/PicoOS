@@ -168,6 +168,8 @@ def install_begin(info):
         "source": (info.get("source") or "upload")[:16],
         "repo": (info.get("repo") or "")[:120],
         "homepage": (info.get("homepage") or "")[:200],
+        "license": (info.get("license") or "")[:32],
+        "internet": bool(info.get("internet", False)),
     }
     compat.write_json(stage + "/app.json", m)
     log("Installing app", app_id)
@@ -357,6 +359,11 @@ async def serve_static(app_id, m, req, res, rel):
     rel = rel.strip("/")
     if rel == "":
         rel = m.get("entry") or "index.html"
+        if "/" in rel:
+            # Start page lives in a subfolder (e.g. demo/index.html): redirect so
+            # its relative links resolve against that folder.
+            await res.redirect(rel)
+            return
     clean = safe_rel(rel)
     if clean is None or clean.endswith(".py"):
         await res.error(404, "Not found")

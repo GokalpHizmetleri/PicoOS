@@ -252,12 +252,44 @@ code).
 1. Fork this repository.
 2. Add your app to `store/apps/<your-app-id>/` with a `picoos.json` (its `id` must match the folder
    name) and an `icon.svg`.
-3. Run `python3 tools/build_catalog.py` to check the manifest (CI also does this).
+3. Run `python3 tools/update_store.py --offline` to check the manifest (CI also does this).
 4. Open a pull request. Once it's merged, CI regenerates `store/catalog.json` and the app appears in
    every PicoOS App Store.
 
 Guidelines: original work, no trackers, no remote code that changes the app's behaviour after review,
 works offline where possible, and English UI text.
+
+### Listing an existing open-source project
+
+Already have a static web app on GitHub (or found a great one)? It can be listed **without copying
+any code**. Add an entry to `store/sources.json`:
+
+```json
+{
+  "id": "my-game",
+  "repo": "someone/my-game",
+  "branch": "main",
+  "root": "",
+  "entry": "index.html",
+  "name": "My Game",
+  "description": "What it is, in one or two sentences.",
+  "category": "Games",
+  "icon": "🎮",
+  "include": ["index.html", "js/*", "css/*", "img/*"]
+}
+```
+
+Then check what would be installed and test it:
+
+```bash
+python3 tools/update_store.py --inspect someone/my-game@main
+python3 tools/update_store.py && node tests/store_apps_test.js my-game
+```
+
+Requirements: a permissive or copyleft open-source license, runs from plain files without a build
+step, ≤ 900 KB and ≤ 60 files after `include`/`exclude`. The store shows the repository, its stars
+and license, and links to the source. Users download the files straight from the project's repository
+at the pinned commit; CI moves the pin forward daily.
 
 ### Community (no pull request needed)
 
