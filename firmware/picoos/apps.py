@@ -53,6 +53,14 @@ def safe_rel(rel):
     return "/".join(parts)
 
 
+def _base_prefix(bp):
+    """'/repo-name/' for sites built for GitHub Pages project URLs, else ''."""
+    bp = str(bp or "")
+    if not bp.startswith("/") or not bp.endswith("/") or len(bp) > 64 or bp == "/" or ".." in bp:
+        return ""
+    return bp
+
+
 def disk_cost(size):
     """Approximate flash usage of a file of `size` bytes on LittleFS."""
     return ((size + BLOCK - 1) // BLOCK + 1) * BLOCK
@@ -170,6 +178,7 @@ def install_begin(info):
         "homepage": (info.get("homepage") or "")[:200],
         "license": (info.get("license") or "")[:32],
         "internet": bool(info.get("internet", False)),
+        "base_prefix": _base_prefix(info.get("base_prefix")),
     }
     compat.write_json(stage + "/app.json", m)
     log("Installing app", app_id)
@@ -356,6 +365,13 @@ def _gpio(pin_no, mode=None, value=None, pull=None):
 async def serve_static(app_id, m, req, res, rel):
     """Serve a file of an installed app. rel is the path below the app root."""
     base = app_dir(app_id) + "/www"
+    bp = m.get("base_prefix") or ""
+    if bp:
+        p = "/" + rel.lstrip("/")
+        if p.lower().startswith(bp.lower()):
+            rel = p[len(bp):]
+        elif p.lower() + "/" == bp.lower():
+            rel = ""
     rel = rel.strip("/")
     if rel == "":
         rel = m.get("entry") or "index.html"

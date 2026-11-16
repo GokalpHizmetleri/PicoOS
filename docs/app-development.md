@@ -107,7 +107,7 @@ reachable both at `http://pico.local:8083/` and at `http://pico.local/apps/my-ap
 | `entry` | no | Start page, default `index.html` |
 | `backend` | no | MicroPython file to run as the app's backend |
 | `spa` | no | Single-page-app fallback routing |
-| `root` | no | *Community repos only*: subfolder that contains the app (e.g. `"dist"`) |
+| `root` | no | *GitHub repos only*: subfolder that contains the app (e.g. `"dist"`); found automatically if omitted |
 
 ## The PicoOS SDK
 
@@ -291,7 +291,7 @@ step, ≤ 900 KB and ≤ 60 files after `include`/`exclude`. The store shows the
 and license, and links to the source. Users download the files straight from the project's repository
 at the pinned commit; CI moves the pin forward daily.
 
-### Community (no pull request needed)
+### Make your repository show up in Explore GitHub (no pull request needed)
 
 1. Create a **public** GitHub repository with your app files. `index.html` (or your `entry`) goes in
    the repository root, or in the folder named by `root`.
@@ -299,5 +299,16 @@ at the pinned commit; CI moves the pin forward daily.
    description are used).
 3. Add the topic **`picoos-app`** to the repository (*About → ⚙️ → Topics*).
 
-PicoOS finds it through GitHub search and lists it under **Community**, sorted by stars. Files are
-picked by extension (web files plus `.py`); README/LICENSE files and dotfiles are skipped.
+It then appears under **Explore GitHub → PicoOS apps**. Actually, *any* public repository with a
+ready-to-run `index.html` can be found through the search box; the topic and `picoos.json` just make
+it easier to find and let you set the name, icon, start page, `root` folder and a Python `backend`.
+
+To be recognised as runnable:
+
+- `index.html` (or your `entry`) in the root, in `docs/`, `public/`, `dist/`, `www/`… or on `gh-pages`
+- no build step: the files in the repository are the files the browser runs
+- every `<script src>` and stylesheet the page loads is in the repository (or on a CDN)
+- ≤ 2 MB and ≤ 150 web files in that folder
+
+Files are picked by extension (web files plus your backend `.py`). Dotfiles, `node_modules`, tests,
+README/LICENSE and build configs are skipped.

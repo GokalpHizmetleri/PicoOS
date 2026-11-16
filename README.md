@@ -35,7 +35,7 @@ an internet-synced clock and a storage overview.
 | 🏠 **Dashboard at `pico.local`** | A modern, glass-style home screen (inspired by home-server dashboards like CasaOS) that works on desktop and phone. |
 | 🕒 **Clock for where you are** | Time comes from NTP; the time zone is detected from your internet connection's location, including daylight saving time. Manual override available. |
 | 💾 **Storage at a glance** | Total, used and free flash, split into apps and system. |
-| 🛍️ **App Store** | **Real open-source web apps and games from GitHub** (2048, Sudoku, Pong, a WebGL fluid simulation, a QR generator…), downloaded straight from their own repositories, plus apps made for PicoOS and community apps tagged `picoos-app`. It's refreshed from GitHub daily and checks free space before installing. |
+| 🛍️ **App Store** | **Explore GitHub**: your browser searches GitHub, checks every repository for an HTML/CSS/JS web app that can run on a Pico (no build step, small enough) and downloads it straight from GitHub. Plus a tested *Featured* list and apps made for PicoOS. |
 | ⬆️ **Upload your own apps** | Drop a single `.html` file, a folder, several files or a `.zip`. HTML, CSS, JS, images, fonts: anything a browser can run. |
 | 🔌 **Every app gets its own port** | Click an app on the home screen to open it at `http://pico.local:8081`, `:8082`, … (also reachable at `/apps/<id>/`). |
 | 🧰 **App SDK** | Apps can store data on the Pico, read system info and the clock, toggle the LED, use GPIO pins, and even ship a small **MicroPython backend**. |
@@ -83,13 +83,28 @@ More detail, including troubleshooting, is in **[docs/getting-started.md](docs/g
 
 ## The App Store
 
-Every app in the store runs on a Pico 2 W: it's static HTML/CSS/JS, small enough for the flash, and
-each one is tested by installing it on PicoOS and opening it in a real browser
-([`tests/store_apps_test.js`](tests/store_apps_test.js)).
+### Explore GitHub: every web app that fits
 
-### Open-source apps from GitHub
+The **Explore GitHub** tab turns all of GitHub into an app store, and your browser does all the work:
 
-These are existing open-source projects. PicoOS doesn't copy them: your browser downloads them from
+1. It searches GitHub by category (Games, Browser games, Mini projects, Creative coding, WebGL,
+   Tools, PWA…) or by your own search terms.
+2. It checks every result: is there an `index.html` (also in `docs/`, `public/`, `dist/`… or on
+   `gh-pages`)? Does it run without a build step? Are its scripts and styles really there? Is it
+   small enough for the Pico's flash?
+3. It shows only the projects that pass, with stars, license and size.
+4. **Install** downloads the files straight from GitHub and uploads them to the Pico.
+
+The Pico never talks to GitHub itself: no TLS, no JSON parsing of big API responses, no rate limits
+on the device. Searching, checking and downloading all happen in the browser
+([`firmware/web/dashboard/explore.js`](firmware/web/dashboard/explore.js)).
+[`tests/explore_test.js`](tests/explore_test.js) runs this against the real GitHub, installs the
+apps it finds and opens them to make sure they work.
+
+### Featured: tested open-source apps
+
+A hand-picked list that is tested on every refresh
+([`tests/store_apps_test.js`](tests/store_apps_test.js)). PicoOS doesn't copy them: your browser downloads them from
 **their own GitHub repositories** at a pinned commit. A daily CI job
 ([`tools/update_store.py`](tools/update_store.py)) moves the pins to each project's latest commit,
 so upstream improvements arrive as **Update** buttons.
@@ -136,9 +151,10 @@ Apps that use the PicoOS SDK, for example to store data on the Pico or control i
 | ✅ Tasks | A simple to-do list with priorities and filters | 5.4 KB |
 | 🌦️ Weather | Current conditions, hourly and 7-day forecast for your location | 6.9 KB |
 
-### Community
+### Your own repository
 
-Any public GitHub repository with the topic **`picoos-app`** shows up under *Community* automatically.
+Any public repository with a ready-to-run `index.html` can be found through *Explore GitHub*. Add the
+topic **`picoos-app`** and it is also listed under the *PicoOS apps* category.
 See [Publishing an app](docs/app-development.md#publishing-your-app).
 
 ## How it works

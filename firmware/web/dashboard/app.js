@@ -95,7 +95,7 @@
     clock: null, // { unix, offset, at }
     catalog: null,
     community: null,
-    storeTab: "all",
+    storeTab: "explore",
     storeCat: "All",
     installing: {},
   };
@@ -443,6 +443,10 @@
     msg.hidden = true;
     const tab = S.storeTab;
     $$("#storeTabs .tab").forEach((t) => t.classList.toggle("active", t.dataset.tab === tab));
+    $("#exploreBar").hidden = tab !== "explore";
+    $("#storeMore").hidden = true;
+    $("#storeSearch").placeholder = tab === "explore" ? "Search GitHub for web apps…" : "Search apps";
+    if (tab === "explore") { if (window.PicoOSExplore) window.PicoOSExplore.render(); return; }
     const raw = tab === "community" ? S.community : S.catalog;
     if (!raw || force) {
       grid.innerHTML = Array(6).fill('<div class="skeleton"></div>').join("");
@@ -507,16 +511,24 @@
     const t = e.target.closest(".tab");
     if (!t) return;
     S.storeTab = t.dataset.tab; S.storeCat = "All";
+    $("#storeSearch").value = "";
     renderStore();
   });
   $("#storeCats").addEventListener("click", (e) => {
+    if (S.storeTab === "explore") return; // handled by explore.js
     const c = e.target.closest(".chip");
     if (!c) return;
     S.storeCat = c.dataset.cat;
     renderStore();
   });
-  $("#storeSearch").addEventListener("input", () => renderStore());
+  $("#storeSearch").addEventListener("input", () => { if (S.storeTab !== "explore") renderStore(); });
+  $("#storeSearchForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (S.storeTab === "explore") window.PicoOSExplore.search($("#storeSearch").value.trim());
+    else renderStore();
+  });
   $("#storeGrid").addEventListener("click", async (e) => {
+    if (S.storeTab === "explore") return; // handled by explore.js
     const o = e.target.closest("[data-openapp]");
     if (o) { const a = S.apps.find((x) => x.id === o.dataset.openapp); if (a) window.open(appUrl(a), "_blank", "noopener"); return; }
     const b = e.target.closest("[data-install]");
@@ -760,6 +772,7 @@
     const st = $("#formStore");
     st.store_repo.value = s.store_repo || "";
     st.store_branch.value = s.store_branch || "main";
+    $("#ghToken").value = ls.get("ghToken", "");
     // network
     const w = S.status.wifi;
     $("#netInfo").innerHTML = `<dt>Network</dt><dd>${esc(w.ssid || "–")}</dd><dt>IP address</dt><dd>${esc(w.ip || "–")}</dd><dt>Signal</dt><dd>${w.rssi == null ? "–" : w.rssi + " dBm"}</dd><dt>MAC</dt><dd>${esc(w.mac || "–")}</dd><dt>Address</dt><dd>http://${esc(S.status.device.hostname)}.local</dd>`;
@@ -821,6 +834,7 @@
   $("#formStore").addEventListener("submit", async (e) => {
     e.preventDefault();
     const f = e.target;
+    ls.set("ghToken", $("#ghToken").value.trim());
     await saveSettings({ store_repo: f.store_repo.value.trim() || "GokalpHizmetleri/PicoOS", store_branch: f.store_branch.value.trim() || "main" }, "App Store source saved");
     S.catalog = null;
   });
@@ -847,6 +861,9 @@
     if (!confirm("Restart PicoOS now?")) return;
     try { await api("/api/system/reboot", { method: "POST" }); toast("Restarting… the page reconnects automatically"); } catch (e) { toast(e.message, "error"); }
   });
+
+  // Bridge for explore.js (the GitHub explorer lives in its own file).
+  window.PicoOSDash = { S, $, $$, api, toast, esc, icon, fmtBytes, diskCost, slug, ls, appIconHTML, appUrl, installPackage, refresh, renderStore, closeModal };
 
   // ------------------------------------------------------------------ boot
   $("#btnStore").addEventListener("click", openStore);

@@ -59,19 +59,47 @@ Click **App Store** in the top bar.
 
 <img src="images/app-store.webp" alt="App Store">
 
-The store has four tabs:
+The store has three tabs:
 
 | Tab | What's in it |
 |---|---|
-| **All** | Everything in the catalog |
-| **Open source** | Real open-source web apps and games that live in **their own GitHub repositories**: 2048, Sudoku, Pong, a WebGL fluid simulation, a QR code generator and more. Each card links to the project, and shows its stars and license. |
-| **PicoOS** | Apps made for PicoOS that use the SDK (notes and tasks stored on the Pico, Pico Control, System Monitor…) |
-| **Community** | Public GitHub repositories with the topic **`picoos-app`**, found live. Apps larger than 1.5 MB are hidden because they won't fit. |
+| **Explore GitHub** | **Every** HTML/CSS/JS web app on GitHub that can run on your Pico, found live by your browser (details below) |
+| **Featured** | A hand-picked, tested list: 2048, Sudoku, Pong, a WebGL fluid simulation, a QR generator and more, refreshed from their repositories daily |
+| **Made for PicoOS** | Apps that use the PicoOS SDK (notes and tasks stored on the Pico, Pico Control, System Monitor…) |
 
-The catalog is refreshed from GitHub **every day**. When an open-source project gets new commits,
-its card shows **Update available**. Cards tagged **Needs internet** load some content (pictures,
-jokes, icons) from the web while you use them; everything else works offline once installed.
+### Explore GitHub
 
+This tab is a live search of GitHub. **All the work happens in your browser**; the Pico only
+receives the finished files.
+
+1. Pick a category (*Popular, Games, Browser games, JavaScript games, Vanilla JS, Mini projects,
+   Creative coding, Canvas & WebGL, Tools, PWA, PicoOS apps*) or type anything into the search box
+   and press Enter, for example `snake`, `pomodoro`, `markdown editor` or `tetris`.
+2. Your browser asks GitHub for matching repositories (30 per page) and checks **each one**:
+   - it looks for an `index.html` in the repository root and in `docs/`, `public/`, `dist/`,
+     `build/`, `www/`, `site/`, `app/`, `web/`, `src/`, `demo/`… and on the `gh-pages` branch
+     (where many projects publish their ready-built site);
+   - it reads the start page and rejects projects that **need a build step** (TypeScript/JSX/Vue
+     entry files, Jekyll or template syntax);
+   - it checks that the scripts and stylesheets the page loads are actually in the repository;
+   - it keeps only the files a browser needs (HTML, CSS, JS, images, fonts, sounds, WebAssembly…)
+     and checks the total size (max 2 MB / 150 files) against the free space on your Pico.
+3. Only apps that pass are shown (untick **Only apps that run on the Pico** to see the rest, each
+   with the reason it was rejected). If a page has few runnable apps, the next pages are checked
+   automatically; **Load more** goes further.
+4. **Install** downloads every file straight from `raw.githubusercontent.com` and uploads it to the
+   Pico. The app gets its own port like any other app.
+
+Cards show the repository, stars, license, size and last update. **Update** appears when the
+repository has new commits since you installed it. Sites built for GitHub Pages that expect to live
+under `/<repository-name>/` work too, because PicoOS maps that path to the app.
+
+> **GitHub limits:** without an account GitHub allows about 10 searches per minute, which is plenty
+> for browsing. If you hit the limit, wait a minute, or add a free personal access token in
+> *Settings → App Store*. The token stays in your browser and is only sent to api.github.com.
+> Results are cached in your browser, so going back to a category doesn't cost extra searches.
+
+### Things to know
 Every card shows the app's size. The size tag is **green** when it fits in the Pico's free space and
 **red** when it doesn't. The button changes to match:
 

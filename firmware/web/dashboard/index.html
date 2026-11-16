@@ -95,22 +95,26 @@
     <div class="sheet-head">
       <div>
         <h2 id="storeTitle"><span class="ico" data-icon="store"></span>App Store</h2>
-        <p class="muted" id="storeSub">Open-source web apps from GitHub and apps made for PicoOS, ready to run on your Pico</p>
+        <p class="muted" id="storeSub">Every HTML, CSS &amp; JS web app on GitHub that fits your Pico, found and checked by your browser</p>
       </div>
       <button class="btn ghost icon-only" data-close aria-label="Close"><span class="ico" data-icon="x"></span></button>
     </div>
     <div class="store-bar">
       <div class="tabs" id="storeTabs">
-        <button class="tab active" data-tab="all">All</button>
-        <button class="tab" data-tab="github">Open source</button>
-        <button class="tab" data-tab="picoos">PicoOS</button>
-        <button class="tab" data-tab="community">Community</button>
+        <button class="tab active" data-tab="explore">Explore GitHub</button>
+        <button class="tab" data-tab="all">Featured</button>
+        <button class="tab" data-tab="picoos">Made for PicoOS</button>
       </div>
-      <label class="search"><span class="ico" data-icon="search"></span><input id="storeSearch" type="search" placeholder="Search apps" autocomplete="off"></label>
+      <form class="search" id="storeSearchForm"><span class="ico" data-icon="search"></span><input id="storeSearch" type="search" placeholder="Search GitHub for web apps…" autocomplete="off" enterkeyhint="search"></form>
     </div>
     <div class="chips" id="storeCats"></div>
+    <div class="explore-bar" id="exploreBar" hidden>
+      <label class="check"><input type="checkbox" id="exOnlyOk" checked> Only apps that run on the Pico</label>
+      <label>Sort <select id="exSort"><option value="stars">Most stars</option><option value="updated">Recently updated</option></select></label>
+    </div>
     <div class="store-free" id="storeFree"></div>
     <div class="store-grid" id="storeGrid"></div>
+    <div class="store-more" id="storeMore" hidden><button class="btn glass" id="exMore">Load more</button></div>
     <div class="store-msg" id="storeMsg" hidden></div>
   </div>
 </div>
@@ -214,7 +218,10 @@
           </form>
         </div>
         <form class="pane form" data-pane="store" id="formStore">
-          <p class="muted">The official catalog is read from <code>store/catalog.json</code> in this GitHub repository. Community apps are public repositories with the <code>picoos-app</code> topic.</p>
+          <p class="muted"><b>Explore GitHub</b> runs entirely in your browser: it searches GitHub, checks every repository for a web app that runs on the Pico (index.html, no build step, small enough) and downloads the files straight from GitHub.</p>
+          <label>GitHub token <small class="muted">(optional, stored only in this browser)</small><input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_…"></label>
+          <small class="muted">Without a token GitHub allows about 10 searches per minute. A token without any scopes (fine-grained, public repositories read-only) raises that to 30 per minute. It is only sent to api.github.com, never to the Pico.</small>
+          <p class="muted"><b>Featured</b> apps are a tested list read from <code>store/catalog.json</code> in this repository:</p>
           <div class="row2">
             <label>Repository<input name="store_repo" placeholder="owner/repo"></label>
             <label>Branch<input name="store_branch" placeholder="main"></label>
@@ -244,5 +251,6 @@
 <div class="offline" id="offline" hidden><span class="ico" data-icon="wifi"></span>Connection to PicoOS lost — retrying…</div>
 
 <script src="/app.js"></script>
+<script src="/explore.js"></script>
 </body>
 </html>

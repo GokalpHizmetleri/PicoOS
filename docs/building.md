@@ -120,7 +120,20 @@ python3 tools/update_store.py --inspect owner/repo@branch[:subfolder]   # what w
 If an upstream repository breaks (deleted, too big, entry page gone), the last good version stays in
 the catalog and the script prints a warning.
 
-### Testing the store apps for real
+### Testing Explore GitHub against the real GitHub
+
+```bash
+node tests/explore_test.js                                   # popular, games, projects, vanilla + "snake game"
+node tests/explore_test.js --categories games --per-category 5 --search "pomodoro"
+GITHUB_TOKEN=... node tests/explore_test.js                  # avoids search rate limits
+```
+
+It drives the real dashboard in headless Chromium: runs the searches, waits for the browser to check
+every repository, prints how many are runnable and why the others were rejected, then clicks
+**Install** on some of them and opens each app, failing on files the Pico doesn't serve or on
+JavaScript errors. A JSON report is written to the system temp folder.
+
+### Testing the featured apps
 
 ```bash
 node tests/store_apps_test.js              # all GitHub apps

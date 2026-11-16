@@ -7,6 +7,7 @@
 - [Filesystem layout](#filesystem-layout)
 - [Ports](#ports)
 - [How installing works](#how-installing-works)
+- [Explore GitHub (browser-side store)](#explore-github-browser-side-store)
 - [The App Store catalog](#the-app-store-catalog)
 - [Time keeping](#time-keeping)
 - [Source tree](#source-tree)
@@ -123,6 +124,24 @@ Free space is checked when the install starts (estimated with LittleFS block ove
 every file. 64 KB is always kept free for the system.
 
 Updating an app keeps its port, its `installed_at` time, its enabled state and its `data/` folder.
+
+## Explore GitHub (browser-side store)
+
+`firmware/web/dashboard/explore.js` implements a store with no server and no catalog:
+
+| Step | Service | Notes |
+|---|---|---|
+| Search | `api.github.com/search/repositories` | 30 results per page; `fork:false archived:false size:<60000` added to every query; optional user token from localStorage |
+| File list | `data.jsdelivr.com/v1/packages/gh/<repo>@<branch>?structure=flat` | free, CORS-enabled, no GitHub rate limit; `gh-pages` is checked too when the repo has Pages |
+| Start page | `raw.githubusercontent.com/<repo>/<branch>/<root>/index.html` | build-step detection, missing script/style detection, `/<repo>/` base-path detection, CDN detection |
+| Download | `raw.githubusercontent.com/...` | one request per file, streamed to `PUT /api/apps/install/file` |
+
+Results are cached in localStorage per `repo@pushed_at` (up to 250 repos) and searches in
+sessionStorage for 15 minutes. Six repositories are checked in parallel. The installed app stores
+`version = pushed_at`, `source = "github"`, `repo` and `base_prefix`.
+
+`base_prefix` (e.g. `/my-game/`) is set for sites built for a GitHub Pages project URL; the app
+server strips it from request paths so `/my-game/js/app.js` serves `js/app.js`.
 
 ## The App Store catalog
 

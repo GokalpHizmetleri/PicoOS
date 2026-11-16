@@ -310,3 +310,18 @@ body[data-wallpaper="candy"]    { --wall-base: #1a0b26; --w1: #ec4899; --w2: #8b
   .store-grid { grid-template-columns: 1fr; }
   .walls { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* explore GitHub */
+.explore-bar { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin: 4px 0 2px; font-size: 13px; color: var(--muted); }
+.explore-bar label { display: inline-flex; align-items: center; gap: 8px; }
+.explore-bar select { background: var(--glass-2); border: 1px solid var(--line); border-radius: 9px; padding: 5px 8px; }
+.explore-bar select option { background: #111733; }
+.store-more { display: flex; justify-content: center; margin: 18px 0 4px; }
+.store-card.checking .store-desc { opacity: .6; }
+.store-card.bad { opacity: .55; }
+.reason { font-size: 12.5px; color: #fca5a5; }
+.checking-tag { display: inline-flex; align-items: center; gap: 6px; }
+.spin { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,.2); border-top-color: var(--accent); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.notice { font-size: 13px; padding: 10px 12px; border-radius: 12px; background: rgba(251, 191, 36, .1); color: #fde68a; margin: 6px 0 12px; }
+.store-card .app-icon img.avatar { border-radius: 0; }

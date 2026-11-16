@@ -179,6 +179,23 @@ def main():
         s, r, _ = req("POST", base + "/api/apps/install/begin", {"id": "huge", "size": 50 * 1024 * 1024})
         check("too large rejected (507)", s == 507, r)
 
+        # GitHub Pages style base path (/<repo>/...)
+        s, r, _ = req("POST", base + "/api/apps/install/begin", {"id": "pages-site", "name": "Pages", "size": 100, "files": 2, "base_prefix": "/pages-site/", "source": "github"})
+        check("install with base_prefix", s == 200 and r["app"]["base_prefix"] == "/pages-site/", r)
+        req("PUT", base + "/api/apps/install/file?id=pages-site&path=index.html", b'<script src="/pages-site/js/app.js"></script>', "text/html")
+        req("PUT", base + "/api/apps/install/file?id=pages-site&path=js/app.js", b"console.log(1)", "application/javascript")
+        s, r, _ = req("POST", base + "/api/apps/install/commit", {"id": "pages-site"})
+        pbase = "http://127.0.0.1:%d" % r["app"]["port"]
+        time.sleep(0.3)
+        s, body, _ = req("GET", pbase + "/pages-site/js/app.js", raw=True)
+        check("base_prefix path served", s == 200 and body == b"console.log(1)", s)
+        s, body, _ = req("GET", pbase + "/js/app.js", raw=True)
+        check("plain path still served", s == 200, s)
+        s, r, _ = req("POST", base + "/api/apps/install/begin", {"id": "evil-prefix", "size": 10, "base_prefix": "/../"})
+        check("bad base_prefix ignored", s == 200 and r["app"]["base_prefix"] == "", r)
+        req("POST", base + "/api/apps/install/abort", {"id": "evil-prefix"})
+        req("DELETE", base + "/api/apps/pages-site")
+
         # settings
         s, r, _ = req("POST", base + "/api/settings", {"device_name": "Test Pico", "tz_mode": "manual", "tz_offset": 60})
         check("settings saved", s == 200 and r["settings"]["device_name"] == "Test Pico", r)
