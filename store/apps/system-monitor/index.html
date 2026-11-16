@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>System Monitor</title><link rel="icon" href="icon.svg">
+<style>
+:root{--line:#262b52;--text:#eef2ff;--muted:#9aa3c7;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#0b0e1f;color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:26px 16px;display:flex;justify-content:center}
+.w{width:min(960px,100%);display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+h1{grid-column:1/-1;margin:0 0 4px;font-size:24px;display:flex;justify-content:space-between;align-items:baseline}h1 small{font-size:13px;color:var(--muted);font-weight:400}
+.card{background:#12162e;border:1px solid var(--line);border-radius:18px;padding:16px}
+.kpi small{color:var(--muted);font-size:12px;display:block}.kpi b{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.big{grid-column:span 2}.full{grid-column:1/-1}
+.card h2{margin:0 0 10px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;justify-content:space-between}
+canvas{width:100%;height:150px}
+.row{display:grid;grid-template-columns:1fr 2fr 80px;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.bar{height:8px;background:#1d2246;border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#6366f1,#06b6d4)}
+.r{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-width:720px){.w{grid-template-columns:1fr 1fr}.big{grid-column:1/-1}}
+</style></head><body>
+<div class="w">
+  <h1>📈 System Monitor <small id="ver"></small></h1>
+  <div class="card kpi"><small>Uptime</small><b id="up">–</b></div>
+  <div class="card kpi"><small>Temperature</small><b id="tp">–</b></div>
+  <div class="card kpi"><small>Free memory</small><b id="fm">–</b></div>
+  <div class="card kpi"><small>Free storage</small><b id="fs">–</b></div>
+  <div class="card big"><h2>Memory used <span id="mt"></span></h2><canvas id="cm" width="600" height="180"></canvas></div>
+  <div class="card big"><h2>Temperature <span id="tt"></span></h2><canvas id="ct" width="600" height="180"></canvas></div>
+  <div class="card full"><h2>Storage</h2><div id="st"></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);const mem=[],tmp=[];const N=90;
+const fb=b=>b<1024?b+" B":b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(2)+" MB";
+const fu=s=>{const d=s/86400|0,h=s%86400/3600|0,m=s%3600/60|0;return d?`${d}d ${h}h`:h?`${h}h ${m}m`:`${m}m ${s%60}s`};
+function plot(id,data,color,unit){const c=$(id),x=c.getContext("2d");x.clearRect(0,0,c.width,c.height);if(data.length<2)return;let lo=Math.min(...data),hi=Math.max(...data);if(hi-lo<1){lo-=1;hi+=1}
+x.strokeStyle="#262b52";x.lineWidth=1;for(let i=1;i<4;i++){x.beginPath();x.moveTo(0,i*c.height/4);x.lineTo(c.width,i*c.height/4);x.stroke()}
+const g=x.createLinearGradient(0,0,0,c.height);g.addColorStop(0,color+"66");g.addColorStop(1,color+"00");x.beginPath();data.forEach((v,i)=>{const X=i/(N-1)*c.width,Y=c.height-8-(v-lo)/(hi-lo)*(c.height-16);i?x.lineTo(X,Y):x.moveTo(X,Y)});x.strokeStyle=color;x.lineWidth=3;x.stroke();x.lineTo((data.length-1)/(N-1)*c.width,c.height);x.lineTo(0,c.height);x.fillStyle=g;x.fill();
+x.fillStyle="#9aa3c7";x.font="20px system-ui";x.fillText(hi.toFixed(1)+unit,8,24);x.fillText(lo.toFixed(1)+unit,8,c.height-10)}
+async function poll(){try{const s=await fetch("_picoos/system").then(r=>r.json());
+$("#ver").textContent=`${s.board} · PicoOS ${s.version} · MicroPython ${s.micropython}`;$("#up").textContent=fu(s.uptime);$("#tp").textContent=s.temperature!=null?s.temperature.toFixed(1)+" °C":"–";
+$("#fm").textContent=fb(s.memory.free);$("#fs").textContent=fb(s.storage.free);
+mem.push(s.memory.used/1024);tmp.push(s.temperature||0);if(mem.length>N){mem.shift();tmp.shift()}
+$("#mt").textContent=`${fb(s.memory.used)} / ${fb(s.memory.total)}`;$("#tt").textContent=s.temperature!=null?s.temperature.toFixed(1)+" °C":"";
+plot("#cm",mem,"#6366f1"," KB");plot("#ct",tmp,"#f43f5e","°");
+const st=s.storage;const rows=[["Apps",st.apps],["System & config",st.used-st.apps],["Free",st.free]];
+$("#st").innerHTML=rows.map(([n,v])=>`<div class="row"><span>${n}</span><div class="bar"><i style="width:${v/st.total*100}%"></i></div><span class="r">${fb(v)}</span></div>`).join("")+`<div class="row"><b>Total</b><span></span><span class="r"><b>${fb(st.total)}</b></span></div>`}catch{$("#ver").textContent="Pico not reachable"}}
+poll();setInterval(poll,2000);
+</script></body></html>

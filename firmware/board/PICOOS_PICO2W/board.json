@@ -1,0 +1,11 @@
+{
+    "deploy": [],
+    "docs": "https://github.com/GokalpHizmetleri/PicoOS",
+    "features": ["Dual-core", "External Flash", "USB", "WiFi"],
+    "images": [],
+    "mcu": "rp2350",
+    "product": "PicoOS for Pico 2 W",
+    "thumbnail": "",
+    "url": "https://github.com/GokalpHizmetleri/PicoOS",
+    "vendor": "PicoOS"
+}

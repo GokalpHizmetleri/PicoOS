@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculator</title><link rel="icon" href="icon.svg">
+<style>
+:root{--bg:#0f1226;--key:#1d2244;--key2:#2a3060;--op:#f59e0b;--text:#eef2ff;--muted:#9aa3c7;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 0%,#2a2350,#0f1226 65%);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px}
+.calc{width:min(360px,100%);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:28px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.hist{height:58px;overflow:hidden;color:var(--muted);font-size:14px;text-align:right;display:flex;flex-direction:column;justify-content:flex-end}
+.expr{min-height:22px;text-align:right;color:var(--muted);font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.out{text-align:right;font-size:52px;font-weight:300;letter-spacing:-.02em;margin:4px 0 16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+button{border:0;border-radius:18px;height:64px;font:inherit;font-size:22px;color:var(--text);background:var(--key);cursor:pointer;transition:filter .1s,transform .08s}
+button:hover{filter:brightness(1.2)}button:active{transform:scale(.95)}
+.fn{background:var(--key2);color:#c7cdf0}.op{background:var(--op);color:#1a1205;font-weight:600}.op.on{background:#fff;color:var(--op)}
+.zero{grid-column:span 2}
+</style></head><body>
+<main class="calc">
+  <div class="hist" id="hist"></div>
+  <div class="expr" id="expr"></div>
+  <div class="out" id="out">0</div>
+  <div class="keys" id="keys">
+    <button class="fn" data-k="C">AC</button><button class="fn" data-k="±">±</button><button class="fn" data-k="%">%</button><button class="op" data-k="/">÷</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="op" data-k="*">×</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="op" data-k="-">−</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button class="op" data-k="+">+</button>
+    <button class="zero" data-k="0">0</button><button data-k=".">.</button><button class="op" data-k="=">=</button>
+  </div>
+</main>
+<script>
+let cur="0",prev=null,op=null,fresh=false;const hist=[];
+const sym={"/":"÷","*":"×","-":"−","+":"+"};
+const fmt=n=>{if(!isFinite(n))return"Error";const s=String(+n.toPrecision(12));return s.length>14?n.toExponential(6):s};
+function calc(a,b,o){a=+a;b=+b;return o=="+"?a+b:o=="-"?a-b:o=="*"?a*b:b===0?NaN:a/b}
+function render(){document.getElementById("out").textContent=cur;document.getElementById("expr").textContent=prev!=null&&op?`${prev} ${sym[op]}`:"";
+document.querySelectorAll(".op").forEach(b=>b.classList.toggle("on",b.dataset.k===op&&fresh));
+document.getElementById("hist").innerHTML=hist.slice(-3).map(h=>`<div>${h}</div>`).join("")}
+function press(k){
+  if(/[0-9]/.test(k)){cur=fresh||cur==="0"?k:cur.length<15?cur+k:cur;fresh=false}
+  else if(k=="."){if(fresh){cur="0.";fresh=false}else if(!cur.includes("."))cur+="."}
+  else if(k=="C"){cur="0";prev=null;op=null}
+  else if(k=="±"){cur=cur.startsWith("-")?cur.slice(1):cur==="0"?cur:"-"+cur}
+  else if(k=="%"){cur=fmt(+cur/100)}
+  else if(k=="⌫"){cur=cur.length>1?cur.slice(0,-1):"0"}
+  else if("+-*/".includes(k)){if(op&&!fresh&&prev!=null){cur=fmt(calc(prev,cur,op))}prev=cur;op=k;fresh=true}
+  else if(k=="="){if(op!=null&&prev!=null){const r=fmt(calc(prev,cur,op));hist.push(`${prev} ${sym[op]} ${cur} = ${r}`);cur=r;prev=null;op=null;fresh=true}}
+  render()}
+document.getElementById("keys").onclick=e=>{const b=e.target.closest("button");if(b)press(b.dataset.k)};
+addEventListener("keydown",e=>{const m={Enter:"=",Escape:"C",Backspace:"⌫",",":"."};const k=m[e.key]||e.key;if(/^[0-9.+\-*/=%]$/.test(k)||["C","⌫"].includes(k)){e.preventDefault();press(k)}});
+render();
+</script></body></html>

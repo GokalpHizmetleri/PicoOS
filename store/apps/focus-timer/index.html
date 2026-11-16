@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Focus Timer</title><link rel="icon" href="icon.svg">
+<style>
+:root{--text:#fff1f2;--muted:#fda4af99;--a:#f43f5e;--b:#a855f7;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:radial-gradient(circle at 50% 0%,#3b0a2a,#12061a 65%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:20px;transition:background .6s}
+body.brk{background:radial-gradient(circle at 50% 0%,#063a3a,#04161a 65%)}body.brk{--a:#14b8a6;--b:#22c55e}
+.modes{display:flex;gap:6px;background:rgba(255,255,255,.07);padding:5px;border-radius:14px}
+.modes button{border:0;background:none;color:#ffffffaa;padding:8px 14px;border-radius:10px;font:inherit;font-weight:600;cursor:pointer}.modes button.on{background:rgba(255,255,255,.15);color:#fff}
+.ring{position:relative;width:min(300px,78vw);aspect-ratio:1}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:10;stroke-linecap:round}
+.bg{stroke:rgba(255,255,255,.08)}#arc{stroke:url(#g);transition:stroke-dashoffset .3s linear}
+.time{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.time b{font-size:68px;font-weight:250;font-variant-numeric:tabular-nums;letter-spacing:-.02em}.time span{color:#ffffffaa;margin-top:2px}
+.ctl{display:flex;gap:12px}
+.ctl button{border:0;border-radius:18px;padding:14px 26px;font:inherit;font-weight:700;font-size:17px;cursor:pointer}
+#go{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;min-width:140px}#reset{background:rgba(255,255,255,.1);color:#fff}
+.stats{color:#ffffffaa;font-size:14px;text-align:center}
+label{display:flex;gap:8px;align-items:center;color:#ffffffaa;font-size:14px;cursor:pointer}
+</style></head><body>
+<div class="modes" id="modes"><button data-m="focus" class="on">Focus 25</button><button data-m="short">Break 5</button><button data-m="long">Long 15</button></div>
+<div class="ring"><svg viewBox="0 0 220 220"><defs><linearGradient id="g"><stop offset="0" stop-color="var(--a)"/><stop offset="1" stop-color="var(--b)"/></linearGradient></defs><circle class="bg" cx="110" cy="110" r="96"/><circle id="arc" cx="110" cy="110" r="96"/></svg>
+<div class="time"><b id="t">25:00</b><span id="lbl">Time to focus</span></div></div>
+<div class="ctl"><button id="go">Start</button><button id="reset">Reset</button></div>
+<div class="stats" id="stats"></div>
+<label><input type="checkbox" id="led"> Blink the Pico LED when time is up</label>
+<script>
+const M={focus:[25,"Time to focus"],short:[5,"Short break"],long:[15,"Long break"]};let mode="focus",total=1500,left=1500,run=false,end=0,iv;
+const C=2*Math.PI*96,arc=document.getElementById("arc");arc.style.strokeDasharray=C;
+const key="ft-"+new Date().toDateString();let done=+localStorage[key]||0;
+document.getElementById("led").checked=localStorage.ftLed==="1";document.getElementById("led").onchange=e=>localStorage.ftLed=e.target.checked?"1":"0";
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(Math.floor(s%60)).padStart(2,"0")}
+function draw(){document.getElementById("t").textContent=fmt(Math.ceil(left));arc.style.strokeDashoffset=C*(1-left/total);document.title=(run?fmt(Math.ceil(left))+" · ":"")+"Focus Timer";document.getElementById("stats").textContent=`${done} focus session${done==1?"":"s"} today`}
+function set(m){mode=m;total=left=M[m][0]*60;run=false;clearInterval(iv);document.getElementById("go").textContent="Start";document.getElementById("lbl").textContent=M[m][1];document.body.classList.toggle("brk",m!="focus");document.querySelectorAll("#modes button").forEach(b=>b.classList.toggle("on",b.dataset.m==m));draw()}
+function chime(){try{const a=new AudioContext();[660,880,990].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+i*.25);g.gain.exponentialRampToValueAtTime(.3,a.currentTime+i*.25+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+i*.25+.6);o.start(a.currentTime+i*.25);o.stop(a.currentTime+i*.25+.7)})}catch{}}
+async function blink(){if(!document.getElementById("led").checked)return;for(let i=0;i<6;i++){try{await fetch("_picoos/led",{method:"POST",body:JSON.stringify({on:"toggle"})})}catch{return}await new Promise(r=>setTimeout(r,350))}}
+function finish(){run=false;clearInterval(iv);chime();blink();if(mode=="focus"){done++;localStorage[key]=done;set(done%4==0?"long":"short")}else set("focus");if(Notification.permission=="granted")new Notification("Focus Timer",{body:M[mode][1]})}
+document.getElementById("go").onclick=()=>{if(run){run=false;clearInterval(iv);document.getElementById("go").textContent="Resume"}else{if(window.Notification&&Notification.permission=="default")Notification.requestPermission();run=true;end=Date.now()+left*1000;document.getElementById("go").textContent="Pause";iv=setInterval(()=>{left=Math.max(0,(end-Date.now())/1000);draw();if(left<=0)finish()},250)}draw()};
+document.getElementById("reset").onclick=()=>set(mode);
+document.getElementById("modes").onclick=e=>{const b=e.target.closest("button");if(b)set(b.dataset.m)};set("focus");
+</script></body></html>

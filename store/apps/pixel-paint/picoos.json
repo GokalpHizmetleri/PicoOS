@@ -1,0 +1,11 @@
+{
+  "id": "pixel-paint",
+  "name": "Pixel Paint",
+  "version": "1.0.0",
+  "description": "Draw 16×16 or 32×32 pixel art with a palette, fill bucket and eraser. Save your gallery on the Pico and export PNGs.",
+  "author": "PicoOS",
+  "category": "Creativity",
+  "icon": "icon.svg",
+  "color": "#ec4899",
+  "entry": "index.html"
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guestbook</title><link rel="icon" href="icon.svg">
+<style>
+:root{--line:#2e2a55;--text:#f5f3ff;--muted:#a5a3cf;--a:#8b5cf6;--b:#3b82f6;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0%,#2b2163,#0d0b1f 60%);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;justify-content:center;padding:36px 16px}
+.w{width:min(560px,100%)}h1{margin:0;font-size:30px}.sub{color:var(--muted);margin:2px 0 22px}
+form{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;margin-bottom:22px}
+input,textarea{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:11px 12px;color:var(--text);font:inherit;outline:none;resize:vertical}input:focus,textarea:focus{border-color:var(--a)}
+.f{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+button{background:linear-gradient(135deg,var(--a),var(--b));border:0;border-radius:12px;padding:10px 20px;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.e{display:flex;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line)}
+.av{width:40px;height:40px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-weight:700;background:linear-gradient(135deg,var(--a),var(--b))}
+.e b{display:block}.e small{color:var(--muted);font-weight:400;margin-left:6px}.e p{margin:2px 0 0;white-space:pre-wrap;word-break:break-word}
+.empty{color:var(--muted);text-align:center;padding:24px}
+</style></head><body>
+<div class="w">
+  <h1>💬 Guestbook</h1><p class="sub" id="sub">Leave a message for everyone on this network</p>
+  <form id="f"><input id="n" placeholder="Your name" maxlength="32"><textarea id="t" rows="3" placeholder="Say hello…" maxlength="280" required></textarea>
+  <div class="f"><span id="left">280 left</span><button>Sign guestbook</button></div></form>
+  <div id="list"><div class="empty">Loading…</div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ago=t=>{const s=Date.now()/1000-t;return s<60?"just now":s<3600?`${s/60|0} min ago`:s<86400?`${s/3600|0} h ago`:new Date(t*1000).toLocaleDateString()};
+async function load(){try{const r=await fetch("api/entries").then(r=>r.json());$("#sub").textContent=`${r.total} message${r.total==1?"":"s"} · powered by a MicroPython backend on your Pico`;
+$("#list").innerHTML=r.entries.map(e=>`<div class="e"><div class="av">${esc(e.name[0].toUpperCase())}</div><div><b>${esc(e.name)}<small>${ago(e.t)}</small></b><p>${esc(e.text)}</p></div></div>`).join("")||'<div class="empty">No messages yet — be the first!</div>'}catch{$("#list").innerHTML='<div class="empty">Backend not reachable</div>'}}
+$("#n").value=localStorage.gbName||"";$("#t").oninput=()=>$("#left").textContent=280-$("#t").value.length+" left";
+$("#f").onsubmit=async e=>{e.preventDefault();localStorage.gbName=$("#n").value;const r=await fetch("api/entries",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:$("#n").value,text:$("#t").value})});if(r.ok){$("#t").value="";$("#left").textContent="280 left";load()}else alert((await r.json()).error)};
+load();setInterval(load,15000);
+</script></body></html>

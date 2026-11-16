@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pico Control</title><link rel="icon" href="icon.svg">
+<style>
+:root{--line:#1f3b2c;--text:#ecfdf5;--muted:#86a897;--on:#22c55e;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0%,#0f3d27,#06120c 60%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:28px 16px;display:flex;justify-content:center}
+.w{width:min(820px,100%);display:grid;gap:16px;grid-template-columns:1fr 1fr}
+h1{grid-column:1/-1;margin:0;font-size:26px}h1 small{display:block;font-size:14px;color:var(--muted);font-weight:400}
+.card{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:20px;padding:18px}
+.card h2{margin:0 0 12px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.led{display:flex;align-items:center;gap:18px}
+.bulb{width:70px;height:70px;border-radius:50%;background:#183325;box-shadow:inset 0 0 0 3px #244a36;transition:.2s}
+.bulb.on{background:radial-gradient(circle at 35% 35%,#bbf7d0,#22c55e 60%);box-shadow:0 0 40px #22c55e,0 0 80px #22c55e66}
+button{background:#163126;border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}button:hover{border-color:var(--on)}
+.temp b{font-size:42px;font-weight:300}canvas{width:100%;height:120px;margin-top:8px}
+.pins{grid-column:1/-1}.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pin{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.2)}
+.pin b{font-family:ui-monospace,monospace}.pin select{background:#0c1f16;border:1px solid var(--line);color:var(--text);border-radius:8px;font-size:12px;padding:3px}
+.sw{width:42px;height:24px;border-radius:99px;background:#244a36;position:relative;cursor:pointer;border:0;padding:0;flex:none}.sw::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.15s}.sw.on{background:var(--on)}.sw.on::after{left:21px}
+.val{font-family:ui-monospace,monospace;font-size:13px;color:var(--muted);width:42px;text-align:center}
+.warn{color:#fbbf24;font-size:13px;margin:0 0 10px}
+@media(max-width:640px){.w{grid-template-columns:1fr}}
+</style></head><body>
+<div class="w">
+  <h1>🟢 Pico Control<small id="sub">Raspberry Pi Pico 2 W hardware</small></h1>
+  <div class="card"><h2>On-board LED</h2><div class="led"><div class="bulb" id="bulb"></div><div><button id="toggle">Toggle LED</button><p class="sub" style="color:var(--muted);margin:8px 0 0;font-size:13px">The LED is wired to the Wi-Fi chip (WL_GPIO0).</p></div></div></div>
+  <div class="card temp"><h2>Chip temperature</h2><b id="temp">–</b> °C<canvas id="chart" width="600" height="160"></canvas></div>
+  <div class="card pins"><h2>GPIO pins</h2><p class="warn">⚠ Only connect what you know is safe: pins are 3.3 V and set as outputs drive the pin.</p><div class="pg" id="pins"></div></div>
+</div>
+<script>
+const PINS=[...Array(23).keys(),26,27,28];const $=s=>document.querySelector(s);const temps=[];
+const post=(u,b)=>fetch(u,{method:"POST",body:JSON.stringify(b)}).then(r=>r.json());
+async function led(v){const r=v===undefined?await fetch("_picoos/led").then(r=>r.json()):await post("_picoos/led",{on:v});$("#bulb").classList.toggle("on",r.on)}
+$("#toggle").onclick=()=>led("toggle");
+$("#pins").innerHTML=PINS.map(p=>`<div class="pin" data-p="${p}"><b>GP${p}</b><select><option value="in">Input</option><option value="out">Output</option></select><button class="sw" title="Set high/low" hidden></button><span class="val">–</span></div>`).join("");
+$("#pins").addEventListener("change",async e=>{const el=e.target.closest(".pin"),p=el.dataset.p,mode=e.target.value;el.querySelector(".sw").hidden=mode!="out";const r=await post(`_picoos/gpio/${p}`,{mode,value:mode=="out"?0:undefined,pull:mode=="in"?"down":undefined});el.querySelector(".val").textContent=r.value??"err";el.querySelector(".sw").classList.toggle("on",!!r.value)});
+$("#pins").addEventListener("click",async e=>{const s=e.target.closest(".sw");if(!s)return;const el=s.closest(".pin");const v=s.classList.contains("on")?0:1;const r=await post(`_picoos/gpio/${el.dataset.p}`,{value:v});s.classList.toggle("on",!!r.value);el.querySelector(".val").textContent=r.value});
+async function readInputs(){for(const el of document.querySelectorAll(".pin")){if(el.querySelector("select").value!="in"||el.querySelector(".val").textContent=="–")continue;try{const r=await fetch(`_picoos/gpio/${el.dataset.p}`).then(r=>r.json());el.querySelector(".val").textContent=r.value}catch{}}}
+function chart(){const c=$("#chart"),x=c.getContext("2d");x.clearRect(0,0,c.width,c.height);if(temps.length<2)return;const lo=Math.min(...temps)-1,hi=Math.max(...temps)+1;x.beginPath();temps.forEach((t,i)=>{const X=i/(temps.length-1)*c.width,Y=c.height-(t-lo)/(hi-lo)*c.height;i?x.lineTo(X,Y):x.moveTo(X,Y)});x.strokeStyle="#22c55e";x.lineWidth=3;x.stroke();x.lineTo(c.width,c.height);x.lineTo(0,c.height);x.fillStyle="#22c55e22";x.fill()}
+async function poll(){try{const s=await fetch("_picoos/system").then(r=>r.json());if(s.temperature!=null){temps.push(s.temperature);if(temps.length>60)temps.shift();$("#temp").textContent=s.temperature.toFixed(1);chart()}$("#sub").textContent=`${s.board} · PicoOS ${s.version}`}catch{$("#sub").textContent="Pico not reachable"}readInputs()}
+led();poll();setInterval(poll,2000);
+</script></body></html>

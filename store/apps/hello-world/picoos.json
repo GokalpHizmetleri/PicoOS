@@ -1,0 +1,11 @@
+{
+  "id": "hello-world",
+  "name": "Hello World",
+  "version": "1.0.0",
+  "description": "The starter template for building your own PicoOS app. Shows device info, the clock and how to store data on the Pico in ~60 lines.",
+  "author": "PicoOS",
+  "category": "Developer",
+  "icon": "icon.svg",
+  "color": "#14b8a6",
+  "entry": "index.html"
+}

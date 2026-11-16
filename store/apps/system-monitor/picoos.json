@@ -1,0 +1,11 @@
+{
+  "id": "system-monitor",
+  "name": "System Monitor",
+  "version": "1.0.0",
+  "description": "Live graphs of memory usage and chip temperature, storage breakdown per app and uptime of your PicoOS device.",
+  "author": "PicoOS",
+  "category": "Hardware",
+  "icon": "icon.svg",
+  "color": "#6366f1",
+  "entry": "index.html"
+}

@@ -1,0 +1,11 @@
+{
+  "id": "calculator",
+  "name": "Calculator",
+  "version": "1.0.0",
+  "description": "A clean calculator with keyboard support, percentage, sign toggle and a running history of your last results.",
+  "author": "PicoOS",
+  "category": "Utilities",
+  "icon": "icon.svg",
+  "color": "#f59e0b",
+  "entry": "index.html"
+}

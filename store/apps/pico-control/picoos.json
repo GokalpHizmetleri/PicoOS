@@ -1,0 +1,11 @@
+{
+  "id": "pico-control",
+  "name": "Pico Control",
+  "version": "1.0.0",
+  "description": "Toggle the on-board LED and drive or read GPIO pins of your Pico 2 W from the browser, with a live chip temperature graph.",
+  "author": "PicoOS",
+  "category": "Hardware",
+  "icon": "icon.svg",
+  "color": "#22c55e",
+  "entry": "index.html"
+}

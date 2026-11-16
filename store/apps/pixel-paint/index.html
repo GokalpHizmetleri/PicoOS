@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Paint</title><link rel="icon" href="icon.svg">
+<style>
+:root{--line:#2f2a4a;--text:#f5f3ff;--muted:#a5a0c8;--accent:#ec4899;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#110e1f;color:var(--text);font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;padding:20px 12px;gap:14px}
+h1{margin:0;font-size:22px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tools button,.tools select{background:#1d1934;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer}
+.tools button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pal{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:560px}
+.pal button{width:28px;height:28px;border-radius:8px;border:2px solid transparent;cursor:pointer}.pal button.on{border-color:#fff;transform:scale(1.12)}
+.pal input{width:34px;height:30px;border:0;background:none;cursor:pointer}
+canvas{width:min(512px,92vw);aspect-ratio:1;image-rendering:pixelated;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5);touch-action:none;cursor:crosshair;background:repeating-conic-gradient(#2a2640 0 25%,#221f36 0 50%) 0 0/24px 24px}
+.gal{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:600px}
+.gal div{position:relative}.gal img{width:64px;height:64px;image-rendering:pixelated;border-radius:8px;border:1px solid var(--line);cursor:pointer;background:#221f36}
+.gal button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:0;background:#f87171;color:#fff;cursor:pointer;font-size:12px;line-height:1}
+small{color:var(--muted)}
+</style></head><body>
+<h1>🎨 Pixel Paint</h1>
+<div class="tools">
+  <button data-tool="pen" class="on">✏️ Pen</button><button data-tool="fill">🪣 Fill</button><button data-tool="erase">🧽 Eraser</button>
+  <select id="size"><option value="16">16 × 16</option><option value="32">32 × 32</option></select>
+  <button id="undo">↶ Undo</button><button id="clear">Clear</button><button id="save">💾 Save to Pico</button><button id="png">⬇ PNG</button>
+</div>
+<div class="pal" id="pal"></div>
+<canvas id="c" width="16" height="16"></canvas>
+<small id="msg">Gallery is stored on your Pico</small>
+<div class="gal" id="gal"></div>
+<script>
+const COLORS=["#000000","#ffffff","#9ca3af","#4b5563","#ef4444","#f97316","#f59e0b","#fde047","#84cc16","#22c55e","#14b8a6","#06b6d4","#3b82f6","#6366f1","#a855f7","#ec4899","#7c2d12","#fda4af"];
+let N=16,px=new Array(N*N).fill(null),color="#ec4899",tool="pen",hist=[],gallery=[];const c=document.getElementById("c"),x=c.getContext("2d");
+const $=s=>document.querySelector(s);
+function draw(){x.clearRect(0,0,N,N);px.forEach((v,i)=>{if(v){x.fillStyle=v;x.fillRect(i%N,Math.floor(i/N),1,1)}})}
+function pal(){$("#pal").innerHTML=COLORS.map(k=>`<button style="background:${k}" data-c="${k}" class="${k==color?"on":""}"></button>`).join("")+`<input type="color" id="custom" value="${color}" title="Custom color">`;$("#custom").oninput=e=>{color=e.target.value;pal()}}
+$("#pal").onclick=e=>{const b=e.target.closest("[data-c]");if(b){color=b.dataset.c;if(tool=="erase")setTool("pen");pal()}};
+function setTool(t){tool=t;document.querySelectorAll("[data-tool]").forEach(b=>b.classList.toggle("on",b.dataset.tool==t))}
+document.querySelectorAll("[data-tool]").forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+function cell(e){const r=c.getBoundingClientRect();const i=Math.floor((e.clientX-r.left)/r.width*N),j=Math.floor((e.clientY-r.top)/r.height*N);return i>=0&&j>=0&&i<N&&j<N?j*N+i:-1}
+function fill(i,target){const st=[i];while(st.length){const k=st.pop();if(k<0||k>=N*N||px[k]!==target||px[k]===color)continue;px[k]=color;const a=k%N;st.push(k-N,k+N);if(a>0)st.push(k-1);if(a<N-1)st.push(k+1)}}
+let down=false;
+c.onpointerdown=e=>{down=true;c.setPointerCapture(e.pointerId);hist.push(px.slice());if(hist.length>40)hist.shift();paint(e)};
+c.onpointermove=e=>{if(down&&tool!="fill")paint(e)};c.onpointerup=()=>down=false;
+function paint(e){const i=cell(e);if(i<0)return;if(tool=="fill")fill(i,px[i]);else px[i]=tool=="erase"?null:color;draw()}
+$("#undo").onclick=()=>{if(hist.length){px=hist.pop();draw()}};
+$("#clear").onclick=()=>{hist.push(px.slice());px.fill(null);draw()};
+$("#size").onchange=e=>{N=+e.target.value;c.width=c.height=N;px=new Array(N*N).fill(null);hist=[];draw()};
+function toURL(p,n,scale){const cv=document.createElement("canvas");cv.width=cv.height=n*scale;const g=cv.getContext("2d");g.imageSmoothingEnabled=false;p.forEach((v,i)=>{if(v){g.fillStyle=v;g.fillRect(i%n*scale,Math.floor(i/n)*scale,scale,scale)}});return cv.toDataURL("image/png")}
+$("#png").onclick=()=>{const a=document.createElement("a");a.href=toURL(px,N,512/N);a.download="pixel-art.png";a.click()};
+async function loadGal(){try{const r=await fetch("_picoos/data/gallery");gallery=r.ok?await r.json():[]}catch{gallery=[]}renderGal()}
+function renderGal(){$("#gal").innerHTML=gallery.map((g,i)=>`<div><img src="${toURL(g.px,g.n,4)}" data-i="${i}" title="Open"><button data-del="${i}">×</button></div>`).join("")}
+async function saveGal(){const r=await fetch("_picoos/data/gallery",{method:"PUT",body:JSON.stringify(gallery)});$("#msg").textContent=r.ok?"Saved on your Pico ✓":"Could not save ("+r.status+")"}
+$("#save").onclick=()=>{if(gallery.length>=24)gallery.shift();gallery.push({n:N,px:px.slice()});renderGal();saveGal().catch(()=>$("#msg").textContent="Pico not reachable")};
+$("#gal").onclick=e=>{const d=e.target.dataset;if(d.del!=null){gallery.splice(+d.del,1);renderGal();saveGal()}else if(d.i!=null){const g=gallery[+d.i];N=g.n;$("#size").value=N;c.width=c.height=N;px=g.px.slice();hist=[];draw()}};
+pal();draw();loadGal();
+</script></body></html>

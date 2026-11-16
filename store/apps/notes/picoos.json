@@ -1,0 +1,11 @@
+{
+  "id": "notes",
+  "name": "Notes",
+  "version": "1.0.0",
+  "description": "Quick notes saved directly on your Pico, so they follow you to every device on your network. Autosaves while you type.",
+  "author": "PicoOS",
+  "category": "Productivity",
+  "icon": "icon.svg",
+  "color": "#fbbf24",
+  "entry": "index.html"
+}

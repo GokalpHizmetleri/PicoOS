@@ -1,0 +1,11 @@
+{
+  "id": "todo",
+  "name": "Tasks",
+  "version": "1.0.0",
+  "description": "A simple to-do list with priorities and filters. Your tasks are stored on the Pico and shared by every device in your home.",
+  "author": "PicoOS",
+  "category": "Productivity",
+  "icon": "icon.svg",
+  "color": "#10b981",
+  "entry": "index.html"
+}

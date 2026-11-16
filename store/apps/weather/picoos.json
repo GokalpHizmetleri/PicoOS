@@ -1,0 +1,11 @@
+{
+  "id": "weather",
+  "name": "Weather",
+  "version": "1.0.0",
+  "description": "Current conditions, hourly and 7-day forecast for your location. Uses the location PicoOS detected and the free Open-Meteo service (no API key).",
+  "author": "PicoOS",
+  "category": "Information",
+  "icon": "icon.svg",
+  "color": "#0ea5e9",
+  "entry": "index.html"
+}

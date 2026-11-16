@@ -1,0 +1,12 @@
+{
+  "id": "guestbook",
+  "name": "Guestbook",
+  "version": "1.0.0",
+  "description": "Let visitors on your network leave a message. Shows how a PicoOS app can ship a tiny MicroPython backend (backend.py) next to its HTML.",
+  "author": "PicoOS",
+  "category": "Social",
+  "icon": "icon.svg",
+  "color": "#8b5cf6",
+  "entry": "index.html",
+  "backend": "backend.py"
+}

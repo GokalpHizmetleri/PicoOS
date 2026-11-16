@@ -1,0 +1,11 @@
+{
+  "id": "focus-timer",
+  "name": "Focus Timer",
+  "version": "1.0.0",
+  "description": "A focus/break interval timer with a progress ring, gentle chime and a daily session counter. Optionally blinks the Pico's LED when a session ends.",
+  "author": "PicoOS",
+  "category": "Productivity",
+  "icon": "icon.svg",
+  "color": "#f43f5e",
+  "entry": "index.html"
+}

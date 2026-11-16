@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>PicoOS Setup</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root { --text: #eef2ff; --muted: rgba(226,232,255,.62); --line: rgba(255,255,255,.12); --glass: rgba(18,24,46,.6); --accent: #7c9cff; --accent-2: #a78bfa; --ok: #34d399; --bad: #f87171; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body { background: #0a0f24; color: var(--text); font: 15px/1.45 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px 16px; overflow-x: hidden; }
+.bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+.bg i { position: absolute; width: 70vmax; height: 70vmax; border-radius: 50%; filter: blur(90px); opacity: .5; }
+.bg i:nth-child(1) { background: #4f46e5; top: -30vmax; left: -25vmax; }
+.bg i:nth-child(2) { background: #06b6d4; bottom: -35vmax; right: -25vmax; }
+.card { width: min(440px, 100%); background: var(--glass); border: 1px solid var(--line); border-radius: 26px; padding: 28px 24px; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+.logo { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.logo b { font-size: 21px; letter-spacing: -.01em; display: block; }
+.logo small { color: var(--muted); }
+h1 { font-size: 22px; margin: 0 0 6px; }
+p { margin: 0 0 16px; color: var(--muted); }
+.alert { background: rgba(248,113,113,.12); border: 1px solid rgba(248,113,113,.3); color: #fecaca; padding: 10px 12px; border-radius: 12px; font-size: 14px; margin-bottom: 16px; }
+.list-head { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
+.nets { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow: auto; margin-bottom: 14px; }
+.net { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.net:hover { background: rgba(255,255,255,.09); }
+.net.active { border-color: var(--accent); background: rgba(124,156,255,.16); }
+.net span.name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; }
+.bars { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.bars i { width: 4px; border-radius: 1px; background: rgba(255,255,255,.25); }
+.bars i:nth-child(1) { height: 25%; } .bars i:nth-child(2) { height: 50%; } .bars i:nth-child(3) { height: 75%; } .bars i:nth-child(4) { height: 100%; }
+.bars i.on { background: var(--text); }
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
+input { background: rgba(255,255,255,.07); border: 1px solid var(--line); border-radius: 12px; padding: 12px; color: var(--text); font: inherit; outline: none; width: 100%; }
+input:focus { border-color: var(--accent); }
+.pw { position: relative; }
+.pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: 0; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; padding: 6px 8px; }
+details { margin: 4px 0 16px; }
+summary { cursor: pointer; color: var(--muted); font-size: 13.5px; margin-bottom: 10px; }
+.suffix { display: flex; align-items: center; gap: 8px; } .suffix span { color: var(--muted); font-weight: 500; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 0; border-radius: 14px; padding: 13px; font: inherit; font-weight: 650; cursor: pointer; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #0b1020; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); margin-top: 8px; }
+.link { background: none; border: 0; color: var(--accent); font: inherit; font-size: 13px; cursor: pointer; padding: 0; }
+.center { text-align: center; }
+.spinner { width: 54px; height: 54px; margin: 10px auto 18px; border-radius: 50%; border: 4px solid rgba(255,255,255,.12); border-top-color: var(--accent); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.big-ico { width: 64px; height: 64px; margin: 6px auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.big-ico.ok { background: rgba(52,211,153,.16); color: var(--ok); }
+.big-ico.bad { background: rgba(248,113,113,.16); color: var(--bad); }
+.big-ico svg { width: 34px; height: 34px; }
+.addr { display: block; margin: 14px 0; padding: 14px; border-radius: 14px; background: rgba(255,255,255,.07); font-size: 20px; font-weight: 700; color: var(--text); text-decoration: none; }
+.steps { text-align: left; font-size: 14px; color: var(--muted); padding-left: 20px; margin: 0 0 6px; }
+.steps li { margin: 6px 0; }
+.foot { margin-top: 18px; text-align: center; font-size: 12px; color: rgba(226,232,255,.4); }
+.empty { padding: 16px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 14px; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i></div>
+<main class="card">
+  <div class="logo">
+    <img src="/favicon.svg" width="40" height="40" alt="">
+    <div><b>PicoOS</b><small id="apName">Wi-Fi setup</small></div>
+  </div>
+
+  <section id="stepPick">
+    <h1>Connect to Wi-Fi</h1>
+    <p>Choose the network PicoOS should join. Afterwards you'll find it at <b id="hostHint">pico.local</b>.</p>
+    <div class="alert" id="lastError" hidden></div>
+    <div class="list-head"><span>Networks nearby</span><button class="link" id="rescan">Scan again</button></div>
+    <div class="nets" id="nets"><div class="empty">Scanning…</div></div>
+    <form id="form">
+      <label id="ssidWrap" hidden>Network name (SSID)<input id="ssid" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+      <label>Password
+        <div class="pw"><input id="password" type="password" autocomplete="current-password" placeholder="Wi-Fi password"><button type="button" id="togglePw">Show</button></div>
+      </label>
+      <details>
+        <summary>Device name &amp; address</summary>
+        <label>Device name<input id="deviceName" maxlength="32" value="PicoOS"></label>
+        <label>Hostname<div class="suffix"><input id="hostname" maxlength="24" value="pico" pattern="[a-z0-9\-]+" autocapitalize="off"><span>.local</span></div></label>
+      </details>
+      <button class="btn" id="connect" type="submit" disabled>Connect</button>
+      <button class="btn ghost" type="button" id="manual">Enter a hidden network</button>
+    </form>
+  </section>
+
+  <section id="stepWait" class="center" hidden>
+    <div class="spinner"></div>
+    <h1>Connecting…</h1>
+    <p id="waitMsg">Joining your network. This takes up to 30 seconds.</p>
+  </section>
+
+  <section id="stepOk" class="center" hidden>
+    <div class="big-ico ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+    <h1>You're connected!</h1>
+    <p>PicoOS is restarting and this setup network will disappear.</p>
+    <ol class="steps">
+      <li>Reconnect this device to <b id="okSsid">your Wi-Fi</b>.</li>
+      <li>Open your PicoOS dashboard:</li>
+    </ol>
+    <a class="addr" id="okAddr" href="http://pico.local/">http://pico.local</a>
+    <p id="okIp"></p>
+  </section>
+
+  <section id="stepLost" class="center" hidden>
+    <div class="big-ico ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M2 9a15 15 0 0 1 20 0"/></svg></div>
+    <h1>Almost there</h1>
+    <p>The connection to the setup network dropped — that usually means PicoOS joined your Wi-Fi and is restarting.</p>
+    <ol class="steps">
+      <li>Reconnect to <b class="lostSsid">your Wi-Fi</b> and open <a class="link" id="lostAddr" href="http://pico.local/">http://pico.local</a></li>
+      <li>If the <b class="lostAp">PicoOS-Setup</b> network shows up again instead, the password was wrong — join it and try again.</li>
+    </ol>
+  </section>
+
+  <section id="stepFail" class="center" hidden>
+    <div class="big-ico bad"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></div>
+    <h1>Couldn't connect</h1>
+    <p id="failMsg">Check the password and try again.</p>
+    <button class="btn" id="retry">Try again</button>
+  </section>
+
+  <div class="foot">PicoOS · Raspberry Pi Pico 2 W</div>
+</main>
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  let chosen = null, secure = true, apSsid = "PicoOS-Setup";
+  const show = (id) => ["stepPick", "stepWait", "stepOk", "stepFail", "stepLost"].forEach((s) => ($("#" + s).hidden = s !== id));
+  const bars = (rssi) => { const n = rssi >= -55 ? 4 : rssi >= -67 ? 3 : rssi >= -78 ? 2 : 1; return `<span class="bars">${[1, 2, 3, 4].map((i) => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`; };
+  const lock = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+
+  function update() {
+    const manual = !$("#ssidWrap").hidden;
+    const ssid = manual ? $("#ssid").value.trim() : chosen;
+    $("#connect").disabled = !ssid;
+    $("#password").placeholder = secure ? "Wi-Fi password" : "Open network – no password";
+  }
+
+  async function scan(refresh) {
+    $("#nets").innerHTML = '<div class="empty">Scanning…</div>';
+    try {
+      const r = await fetch("/api/setup/scan" + (refresh ? "?refresh=1" : "")).then((x) => x.json());
+      if (!r.networks.length) { $("#nets").innerHTML = '<div class="empty">No networks found. Try scanning again.</div>'; return; }
+      $("#nets").innerHTML = r.networks.map((n) => `<button type="button" class="net${n.ssid === chosen ? " active" : ""}" data-ssid="${esc(n.ssid)}" data-secure="${n.secure ? 1 : 0}">${bars(n.rssi)}<span class="name">${esc(n.ssid)}</span>${n.secure ? lock : ""}</button>`).join("");
+    } catch { $("#nets").innerHTML = '<div class="empty">Scan failed. Try again.</div>'; }
+  }
+
+  $("#nets").addEventListener("click", (e) => {
+    const b = e.target.closest(".net");
+    if (!b) return;
+    chosen = b.dataset.ssid; secure = b.dataset.secure === "1";
+    $("#ssidWrap").hidden = true;
+    document.querySelectorAll(".net").forEach((x) => x.classList.toggle("active", x === b));
+    update();
+    if (secure) $("#password").focus();
+  });
+  $("#rescan").onclick = () => scan(true);
+  $("#manual").onclick = () => { $("#ssidWrap").hidden = false; chosen = null; secure = true; document.querySelectorAll(".net").forEach((x) => x.classList.remove("active")); $("#ssid").focus(); update(); };
+  $("#ssid").oninput = update;
+  $("#togglePw").onclick = () => { const p = $("#password"); p.type = p.type === "password" ? "text" : "password"; $("#togglePw").textContent = p.type === "password" ? "Show" : "Hide"; };
+  $("#hostname").oninput = () => { $("#hostHint").textContent = ($("#hostname").value || "pico") + ".local"; };
+  $("#retry").onclick = () => show("stepPick");
+
+  $("#form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const ssid = $("#ssidWrap").hidden ? chosen : $("#ssid").value.trim();
+    if (!ssid) return;
+    const hostname = ($("#hostname").value || "pico").toLowerCase().replace(/[^a-z0-9-]/g, "") || "pico";
+    show("stepWait");
+    $("#waitMsg").textContent = `Joining “${ssid}”. This takes up to 30 seconds.`;
+    try {
+      const r = await fetch("/api/setup/connect", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ssid, password: $("#password").value, hostname, device_name: $("#deviceName").value }) });
+      if (!r.ok) throw new Error((await r.json()).error);
+    } catch (err) { $("#failMsg").textContent = err.message || "Request failed"; show("stepFail"); return; }
+    poll(ssid, hostname, Date.now());
+  });
+
+  async function poll(ssid, hostname, started) {
+    let misses = 0;
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 1200));
+      try {
+        const s = await fetch("/api/setup/status", { cache: "no-store" }).then((x) => x.json());
+        misses = 0;
+        if (s.state === "ok") {
+          $("#okSsid").textContent = ssid;
+          $("#okAddr").textContent = `http://${hostname}.local`;
+          $("#okAddr").href = `http://${hostname}.local/`;
+          $("#okIp").innerHTML = s.ip ? `If that address doesn't open, use <b>http://${esc(s.ip)}</b>` : "";
+          show("stepOk");
+          return;
+        }
+        if (s.state === "failed") {
+          $("#failMsg").textContent = `${s.message}. Check the password and try again.`;
+          show("stepFail");
+          return;
+        }
+      } catch {
+        // Joining the router can move the access point to another channel and drop us.
+        if (++misses >= 6 || Date.now() - started > 45000) {
+          document.querySelectorAll(".lostSsid").forEach((x) => (x.textContent = ssid));
+          document.querySelectorAll(".lostAp").forEach((x) => (x.textContent = apSsid));
+          $("#lostAddr").textContent = `http://${hostname}.local`;
+          $("#lostAddr").href = `http://${hostname}.local/`;
+          show("stepLost");
+          return;
+        }
+      }
+    }
+  }
+
+  fetch("/api/setup/state").then((r) => r.json()).then((s) => {
+    apSsid = s.ap_ssid;
+    $("#apName").textContent = `Wi-Fi setup · ${s.ap_ssid}`;
+    $("#deviceName").value = s.device_name || "PicoOS";
+    $("#hostname").value = s.hostname || "pico";
+    $("#hostHint").textContent = (s.hostname || "pico") + ".local";
+    if (s.last_error) { $("#lastError").hidden = false; $("#lastError").textContent = s.last_error; }
+    if (s.saved_ssid) chosen = s.saved_ssid;
+    update();
+  }).catch(() => {});
+  scan(false);
+})();
+</script>
+</body>
+</html>

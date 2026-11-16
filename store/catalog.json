@@ -1,0 +1,250 @@
+{
+  "schema": 1,
+  "name": "PicoOS App Store",
+  "updated": "2026-11-16T11:16:25Z",
+  "apps": [
+    {
+      "id": "calculator",
+      "name": "Calculator",
+      "version": "1.0.0",
+      "description": "A clean calculator with keyboard support, percentage, sign toggle and a running history of your last results.",
+      "author": "PicoOS",
+      "category": "Utilities",
+      "icon": "icon.svg",
+      "color": "#f59e0b",
+      "entry": "index.html",
+      "path": "store/apps/calculator",
+      "size": 5025,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 778
+        },
+        {
+          "path": "index.html",
+          "size": 4247
+        }
+      ]
+    },
+    {
+      "id": "focus-timer",
+      "name": "Focus Timer",
+      "version": "1.0.0",
+      "description": "A focus/break interval timer with a progress ring, gentle chime and a daily session counter. Optionally blinks the Pico's LED when a session ends.",
+      "author": "PicoOS",
+      "category": "Productivity",
+      "icon": "icon.svg",
+      "color": "#f43f5e",
+      "entry": "index.html",
+      "path": "store/apps/focus-timer",
+      "size": 5869,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 457
+        },
+        {
+          "path": "index.html",
+          "size": 5412
+        }
+      ]
+    },
+    {
+      "id": "guestbook",
+      "name": "Guestbook",
+      "version": "1.0.0",
+      "description": "Let visitors on your network leave a message. Shows how a PicoOS app can ship a tiny MicroPython backend (backend.py) next to its HTML.",
+      "author": "PicoOS",
+      "category": "Social",
+      "icon": "icon.svg",
+      "color": "#8b5cf6",
+      "entry": "index.html",
+      "backend": "backend.py",
+      "path": "store/apps/guestbook",
+      "size": 5235,
+      "files": [
+        {
+          "path": "backend.py",
+          "size": 1192
+        },
+        {
+          "path": "icon.svg",
+          "size": 501
+        },
+        {
+          "path": "index.html",
+          "size": 3542
+        }
+      ]
+    },
+    {
+      "id": "hello-world",
+      "name": "Hello World",
+      "version": "1.0.0",
+      "description": "The starter template for building your own PicoOS app. Shows device info, the clock and how to store data on the Pico in ~60 lines.",
+      "author": "PicoOS",
+      "category": "Developer",
+      "icon": "icon.svg",
+      "color": "#14b8a6",
+      "entry": "index.html",
+      "path": "store/apps/hello-world",
+      "size": 3653,
+      "files": [
+        {
+          "path": "app.js",
+          "size": 1505
+        },
+        {
+          "path": "icon.svg",
+          "size": 472
+        },
+        {
+          "path": "index.html",
+          "size": 690
+        },
+        {
+          "path": "style.css",
+          "size": 986
+        }
+      ]
+    },
+    {
+      "id": "notes",
+      "name": "Notes",
+      "version": "1.0.0",
+      "description": "Quick notes saved directly on your Pico, so they follow you to every device on your network. Autosaves while you type.",
+      "author": "PicoOS",
+      "category": "Productivity",
+      "icon": "icon.svg",
+      "color": "#fbbf24",
+      "entry": "index.html",
+      "path": "store/apps/notes",
+      "size": 5604,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 515
+        },
+        {
+          "path": "index.html",
+          "size": 5089
+        }
+      ]
+    },
+    {
+      "id": "pico-control",
+      "name": "Pico Control",
+      "version": "1.0.0",
+      "description": "Toggle the on-board LED and drive or read GPIO pins of your Pico 2 W from the browser, with a live chip temperature graph.",
+      "author": "PicoOS",
+      "category": "Hardware",
+      "icon": "icon.svg",
+      "color": "#22c55e",
+      "entry": "index.html",
+      "path": "store/apps/pico-control",
+      "size": 6230,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 548
+        },
+        {
+          "path": "index.html",
+          "size": 5682
+        }
+      ]
+    },
+    {
+      "id": "pixel-paint",
+      "name": "Pixel Paint",
+      "version": "1.0.0",
+      "description": "Draw 16×16 or 32×32 pixel art with a palette, fill bucket and eraser. Save your gallery on the Pico and export PNGs.",
+      "author": "PicoOS",
+      "category": "Creativity",
+      "icon": "icon.svg",
+      "color": "#ec4899",
+      "entry": "index.html",
+      "path": "store/apps/pixel-paint",
+      "size": 6491,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 533
+        },
+        {
+          "path": "index.html",
+          "size": 5958
+        }
+      ]
+    },
+    {
+      "id": "system-monitor",
+      "name": "System Monitor",
+      "version": "1.0.0",
+      "description": "Live graphs of memory usage and chip temperature, storage breakdown per app and uptime of your PicoOS device.",
+      "author": "PicoOS",
+      "category": "Hardware",
+      "icon": "icon.svg",
+      "color": "#6366f1",
+      "entry": "index.html",
+      "path": "store/apps/system-monitor",
+      "size": 5143,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 493
+        },
+        {
+          "path": "index.html",
+          "size": 4650
+        }
+      ]
+    },
+    {
+      "id": "todo",
+      "name": "Tasks",
+      "version": "1.0.0",
+      "description": "A simple to-do list with priorities and filters. Your tasks are stored on the Pico and shared by every device in your home.",
+      "author": "PicoOS",
+      "category": "Productivity",
+      "icon": "icon.svg",
+      "color": "#10b981",
+      "entry": "index.html",
+      "path": "store/apps/todo",
+      "size": 5532,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 457
+        },
+        {
+          "path": "index.html",
+          "size": 5075
+        }
+      ]
+    },
+    {
+      "id": "weather",
+      "name": "Weather",
+      "version": "1.0.0",
+      "description": "Current conditions, hourly and 7-day forecast for your location. Uses the location PicoOS detected and the free Open-Meteo service (no API key).",
+      "author": "PicoOS",
+      "category": "Information",
+      "icon": "icon.svg",
+      "color": "#0ea5e9",
+      "entry": "index.html",
+      "path": "store/apps/weather",
+      "size": 7062,
+      "files": [
+        {
+          "path": "icon.svg",
+          "size": 543
+        },
+        {
+          "path": "index.html",
+          "size": 6519
+        }
+      ]
+    }
+  ]
+}

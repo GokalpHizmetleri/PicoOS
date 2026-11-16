@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<title>PicoOS</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body data-wallpaper="aurora">
+<div class="wallpaper" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/favicon.svg" alt="" width="30" height="30">
+    <div>
+      <div class="brand-name">PicoOS</div>
+      <div class="brand-sub" id="deviceName">pico.local</div>
+    </div>
+  </div>
+  <nav class="top-actions">
+    <div class="net-pill" id="netPill" title="Wi-Fi">
+      <span class="ico" data-icon="wifi"></span><span id="netName">…</span>
+    </div>
+    <button class="btn glass" id="btnStore"><span class="ico" data-icon="store"></span><span class="lbl">App Store</span></button>
+    <button class="btn glass" id="btnUpload"><span class="ico" data-icon="upload"></span><span class="lbl">Upload app</span></button>
+    <button class="btn glass icon-only" id="btnSettings" aria-label="Settings"><span class="ico" data-icon="settings"></span></button>
+  </nav>
+</header>
+
+<main class="layout">
+  <aside class="widgets">
+    <section class="card clock-card">
+      <div class="clock-time"><span id="clockHM">--:--</span><span class="clock-sec" id="clockS">--</span></div>
+      <div class="clock-date" id="clockDate">Connecting…</div>
+      <div class="clock-loc"><span class="ico" data-icon="pin"></span><span id="clockLoc">Locating…</span></div>
+      <div class="clock-tz"><span class="dot" id="syncDot"></span><span id="clockTz">Waiting for internet time</span></div>
+    </section>
+
+    <section class="card storage-card">
+      <div class="card-head"><span class="ico" data-icon="disk"></span>Storage</div>
+      <div class="storage-body">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="50" class="ring-bg"/>
+          <circle cx="60" cy="60" r="50" class="ring-sys" id="ringSys"/>
+          <circle cx="60" cy="60" r="50" class="ring-apps" id="ringApps"/>
+        </svg>
+        <div class="ring-label"><b id="storagePct">–%</b><small>used</small></div>
+        <ul class="legend">
+          <li><i class="sw sw-apps"></i>Apps <b id="stApps">–</b></li>
+          <li><i class="sw sw-sys"></i>System <b id="stSys">–</b></li>
+          <li><i class="sw sw-free"></i>Free <b id="stFree">–</b></li>
+        </ul>
+      </div>
+      <div class="storage-total" id="storageTotal">– of – available</div>
+    </section>
+
+    <section class="card sys-card">
+      <div class="card-head"><span class="ico" data-icon="cpu"></span>System</div>
+      <div class="stat-grid">
+        <div class="stat"><small>CPU temp</small><b id="sysTemp">–</b></div>
+        <div class="stat"><small>Uptime</small><b id="sysUptime">–</b></div>
+        <div class="stat"><small>IP address</small><b id="sysIp">–</b></div>
+        <div class="stat"><small>Signal</small><b id="sysRssi">–</b></div>
+      </div>
+      <div class="meter"><div class="meter-head"><span>Memory</span><span id="memText">–</span></div><div class="bar"><i id="memBar"></i></div></div>
+      <div class="sys-foot" id="sysFoot">–</div>
+    </section>
+  </aside>
+
+  <section class="apps-area">
+    <div class="apps-head">
+      <h1>Apps <span class="count" id="appCount">0</span></h1>
+      <div class="apps-tools">
+        <button class="btn ghost" id="btnRefresh" aria-label="Refresh"><span class="ico" data-icon="refresh"></span></button>
+      </div>
+    </div>
+    <div class="app-grid" id="appGrid"></div>
+    <div class="empty" id="appsEmpty" hidden>
+      <div class="empty-art"><span class="ico" data-icon="grid"></span></div>
+      <h2>No apps installed yet</h2>
+      <p>Browse the App Store or upload your own HTML, CSS &amp; JS app.</p>
+      <div class="empty-actions">
+        <button class="btn primary" data-open="store"><span class="ico" data-icon="store"></span>Open App Store</button>
+        <button class="btn glass" data-open="upload"><span class="ico" data-icon="upload"></span>Upload app</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- App Store -->
+<div class="modal" id="storeModal" role="dialog" aria-modal="true" aria-labelledby="storeTitle" hidden>
+  <div class="sheet sheet-xl">
+    <div class="sheet-head">
+      <div>
+        <h2 id="storeTitle"><span class="ico" data-icon="store"></span>App Store</h2>
+        <p class="muted" id="storeSub">Apps made for PicoOS, always fresh from GitHub</p>
+      </div>
+      <button class="btn ghost icon-only" data-close aria-label="Close"><span class="ico" data-icon="x"></span></button>
+    </div>
+    <div class="store-bar">
+      <div class="tabs" id="storeTabs">
+        <button class="tab active" data-tab="official">Official</button>
+        <button class="tab" data-tab="community">Community</button>
+      </div>
+      <label class="search"><span class="ico" data-icon="search"></span><input id="storeSearch" type="search" placeholder="Search apps" autocomplete="off"></label>
+    </div>
+    <div class="chips" id="storeCats"></div>
+    <div class="store-free" id="storeFree"></div>
+    <div class="store-grid" id="storeGrid"></div>
+    <div class="store-msg" id="storeMsg" hidden></div>
+  </div>
+</div>
+
+<!-- Upload -->
+<div class="modal" id="uploadModal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle" hidden>
+  <div class="sheet">
+    <div class="sheet-head">
+      <div>
+        <h2 id="uploadTitle"><span class="ico" data-icon="upload"></span>Upload your app</h2>
+        <p class="muted">A single .html file, a folder, several files or a .zip</p>
+      </div>
+      <button class="btn ghost icon-only" data-close aria-label="Close"><span class="ico" data-icon="x"></span></button>
+    </div>
+    <div class="drop" id="dropZone" tabindex="0">
+      <span class="ico big" data-icon="upload"></span>
+      <b>Drop files here</b>
+      <span class="muted">or</span>
+      <div class="drop-buttons">
+        <button class="btn glass" id="pickFiles">Choose files</button>
+        <button class="btn glass" id="pickFolder">Choose folder</button>
+      </div>
+      <input type="file" id="fileInput" multiple hidden>
+      <input type="file" id="folderInput" webkitdirectory multiple hidden>
+    </div>
+    <div class="upload-files" id="uploadFiles" hidden></div>
+    <form class="form" id="uploadForm" hidden>
+      <div class="row2">
+        <label>App name<input id="upName" required maxlength="40" placeholder="My App"></label>
+        <label>App ID<input id="upId" required maxlength="32" pattern="[a-z0-9][a-z0-9_\-]*" placeholder="my-app"></label>
+      </div>
+      <label>Description<input id="upDesc" maxlength="300" placeholder="What does it do?"></label>
+      <div class="row2">
+        <label>Start page<select id="upEntry"></select></label>
+        <label>Icon<div class="emoji-pick" id="upIcons"></div></label>
+      </div>
+      <div class="fit" id="upFit"></div>
+      <div class="progress" id="upProgress" hidden><i></i><span></span></div>
+      <div class="form-actions">
+        <button type="button" class="btn ghost" id="upReset">Start over</button>
+        <button type="submit" class="btn primary" id="upSubmit"><span class="ico" data-icon="download"></span>Install</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+  <div class="sheet sheet-lg">
+    <div class="sheet-head">
+      <h2 id="settingsTitle"><span class="ico" data-icon="settings"></span>Settings</h2>
+      <button class="btn ghost icon-only" data-close aria-label="Close"><span class="ico" data-icon="x"></span></button>
+    </div>
+    <div class="settings">
+      <nav class="side-tabs" id="setTabs">
+        <button class="active" data-pane="general"><span class="ico" data-icon="home"></span>General</button>
+        <button data-pane="time"><span class="ico" data-icon="clock"></span>Date &amp; time</button>
+        <button data-pane="network"><span class="ico" data-icon="wifi"></span>Network</button>
+        <button data-pane="store"><span class="ico" data-icon="store"></span>App Store</button>
+        <button data-pane="system"><span class="ico" data-icon="cpu"></span>System</button>
+      </nav>
+      <div class="panes">
+        <form class="pane form active" data-pane="general" id="formGeneral">
+          <label>Device name<input name="device_name" maxlength="32"></label>
+          <label>Hostname<div class="suffix"><input name="hostname" maxlength="24" pattern="[a-z0-9\-]+"><span>.local</span></div>
+            <small class="muted">Changing the hostname restarts PicoOS.</small></label>
+          <label>Wallpaper</label>
+          <div class="walls" id="wallPick"></div>
+          <label class="check"><input type="checkbox" id="clock12"> 12-hour clock</label>
+          <div class="form-actions"><button class="btn primary" type="submit">Save</button></div>
+        </form>
+        <form class="pane form" data-pane="time" id="formTime">
+          <div class="seg" id="tzMode">
+            <button type="button" data-mode="auto">Automatic (by location)</button>
+            <button type="button" data-mode="manual">Manual</button>
+          </div>
+          <div class="tz-auto muted" id="tzAutoInfo"></div>
+          <div class="tz-manual">
+            <div class="row2">
+              <label>UTC offset<select name="tz_offset" id="tzOffset"></select></label>
+              <label>Label<input name="tz_name" maxlength="32" placeholder="Europe/Istanbul"></label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn ghost" type="button" id="btnSyncTime"><span class="ico" data-icon="refresh"></span>Sync now</button>
+            <button class="btn primary" type="submit">Save</button>
+          </div>
+        </form>
+        <div class="pane" data-pane="network">
+          <div class="kv" id="netInfo"></div>
+          <h3>Change Wi-Fi network</h3>
+          <form class="form" id="formWifi">
+            <div class="row2">
+              <label>Network<div class="suffix"><select id="wifiSsid"><option value="">Scan to list networks</option></select><button type="button" class="btn ghost icon-only" id="btnScan" aria-label="Scan"><span class="ico" data-icon="refresh"></span></button></div></label>
+              <label>Password<input type="password" id="wifiPass" autocomplete="off"></label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn danger-ghost" id="btnForget">Forget Wi-Fi &amp; restart setup</button>
+              <button class="btn primary" type="submit">Connect &amp; restart</button>
+            </div>
+          </form>
+        </div>
+        <form class="pane form" data-pane="store" id="formStore">
+          <p class="muted">The official catalog is read from <code>store/catalog.json</code> in this GitHub repository. Community apps are public repositories with the <code>picoos-app</code> topic.</p>
+          <div class="row2">
+            <label>Repository<input name="store_repo" placeholder="owner/repo"></label>
+            <label>Branch<input name="store_branch" placeholder="main"></label>
+          </div>
+          <div class="form-actions"><button class="btn primary" type="submit">Save</button></div>
+        </form>
+        <div class="pane" data-pane="system">
+          <div class="kv" id="aboutInfo"></div>
+          <div class="form-actions left">
+            <button class="btn glass" id="btnReboot"><span class="ico" data-icon="power"></span>Restart PicoOS</button>
+          </div>
+          <h3>Logs</h3>
+          <pre class="logs" id="logs"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- App details -->
+<div class="modal" id="detailModal" role="dialog" aria-modal="true" hidden>
+  <div class="sheet sheet-sm" id="detailBody"></div>
+</div>
+
+<div class="menu" id="ctxMenu" hidden></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="offline" id="offline" hidden><span class="ico" data-icon="wifi"></span>Connection to PicoOS lost — retrying…</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

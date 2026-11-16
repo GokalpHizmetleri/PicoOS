@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Notes</title><link rel="icon" href="icon.svg">
+<style>
+:root{--bg:#14120c;--side:#1c1a12;--line:#2e2a1d;--text:#f5f1e6;--muted:#a59f8a;--accent:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{display:grid;grid-template-columns:280px 1fr;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+aside{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px}
+h1{font-size:19px;margin:0}
+.new{background:var(--accent);color:#1a1405;border:0;border-radius:10px;padding:7px 12px;font:inherit;font-weight:650;cursor:pointer}
+.search{margin:0 16px 10px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--text);font:inherit}
+ul{list-style:none;margin:0;padding:0 8px 8px;overflow:auto;flex:1}
+li{padding:10px 12px;border-radius:10px;cursor:pointer;margin-bottom:2px}
+li:hover{background:rgba(255,255,255,.05)}li.on{background:rgba(251,191,36,.16)}
+li b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+li small{color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{display:flex;flex-direction:column;min-width:0}
+.bar{display:flex;align-items:center;gap:10px;padding:12px 20px;border-bottom:1px solid var(--line);color:var(--muted);font-size:13px}
+.bar .sp{flex:1}.bar button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:5px 10px;font:inherit;cursor:pointer}
+.bar button:hover{color:#fca5a5;border-color:#7f1d1d}
+#title{background:none;border:0;color:var(--text);font:700 26px system-ui,sans-serif;padding:22px 26px 6px;outline:none}
+#body{flex:1;background:none;border:0;color:var(--text);font:16px/1.7 system-ui,sans-serif;padding:6px 26px 26px;resize:none;outline:none}
+.empty{margin:auto;color:var(--muted);text-align:center}
+.back{display:none}
+@media(max-width:700px){body{grid-template-columns:1fr}body.editing aside{display:none}body:not(.editing) main{display:none}.back{display:inline-block}}
+</style></head><body>
+<aside>
+  <header><h1>📝 Notes</h1><button class="new" id="new">+ New</button></header>
+  <input class="search" id="q" placeholder="Search notes">
+  <ul id="list"></ul>
+</aside>
+<main>
+  <div class="bar"><button class="back" id="back">← Notes</button><span id="status">Saved on your Pico</span><span class="sp"></span><button id="del">Delete</button></div>
+  <input id="title" placeholder="Title" maxlength="80">
+  <textarea id="body" placeholder="Start writing…"></textarea>
+</main>
+<script>
+const API="_picoos/data/notes";let notes=[],cur=null,timer=null;
+const $=s=>document.querySelector(s);const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function load(){try{const r=await fetch(API);notes=r.ok?await r.json():[]}catch{notes=JSON.parse(localStorage.notes||"[]");status("Offline – saved in this browser")}
+if(!notes.length)notes=[{id:Date.now(),title:"Welcome to Notes",body:"Your notes are stored on the Pico itself, so every phone and computer on your network sees the same notes.\n\nTip: notes save automatically while you type.",t:Date.now()}];open(notes[0].id)}
+function status(s){$("#status").textContent=s}
+function save(){clearTimeout(timer);status("Saving…");timer=setTimeout(async()=>{localStorage.notes=JSON.stringify(notes);try{const r=await fetch(API,{method:"PUT",body:JSON.stringify(notes)});status(r.ok?"Saved on your Pico":"Save failed ("+r.status+")")}catch{status("Offline – saved in this browser")}},600)}
+function list(){const q=$("#q").value.toLowerCase();$("#list").innerHTML=notes.filter(n=>(n.title+n.body).toLowerCase().includes(q)).sort((a,b)=>b.t-a.t).map(n=>`<li data-id="${n.id}" class="${cur&&n.id==cur.id?"on":""}"><b>${esc(n.title||"Untitled")}</b><small>${esc(n.body.slice(0,60)||"No text")}</small></li>`).join("")}
+function open(id){cur=notes.find(n=>n.id==id);$("#title").value=cur?cur.title:"";$("#body").value=cur?cur.body:"";list()}
+$("#list").onclick=e=>{const li=e.target.closest("li");if(li){open(li.dataset.id);document.body.classList.add("editing")}};
+$("#new").onclick=()=>{const n={id:Date.now(),title:"",body:"",t:Date.now()};notes.push(n);open(n.id);document.body.classList.add("editing");$("#title").focus();save()};
+$("#del").onclick=()=>{if(!cur||!confirm("Delete this note?"))return;notes=notes.filter(n=>n!==cur);cur=null;if(notes.length)open(notes[0].id);else{$("#title").value=$("#body").value="";list()}save();document.body.classList.remove("editing")};
+$("#back").onclick=()=>document.body.classList.remove("editing");
+for(const f of["title","body"])$("#"+f).oninput=e=>{if(!cur){$("#new").click()}cur[f]=e.target.value;cur.t=Date.now();list();save()};
+$("#q").oninput=list;load();
+</script></body></html>
