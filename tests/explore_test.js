@@ -6,7 +6,7 @@
  *   - clicks Install on a sample of the apps it marked as runnable,
  *   - opens every installed app and fails on files that don't load from the Pico or JS errors.
  *
- *   node tests/explore_test.js [--per-category N] [--categories games,projects] [--search "snake game"]
+ *   node tests/explore_test.js [--per-category N] [--categories games,projects|none] [--search "snake game|pomodoro"]
  *
  * Needs internet access and Playwright. Set GITHUB_TOKEN to avoid search rate limits.
  */
@@ -22,8 +22,8 @@ const BASE = `http://127.0.0.1:${PORT}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const arg = (name, def) => { const i = process.argv.indexOf("--" + name); return i > 0 ? process.argv[i + 1] : def; };
 const PER = +arg("per-category", 3);
-const CATS = arg("categories", "popular,games,projects,vanilla").split(",");
-const SEARCH = arg("search", "snake game");
+const CATS = arg("categories", "popular,games,projects,vanilla").split(",").filter((c) => c && c !== "none");
+const SEARCHES = arg("search", "snake game").split("|").filter(Boolean);
 
 async function waitUp() {
   for (let i = 0; i < 80; i++) { try { await fetch(BASE + "/api/status"); return; } catch { await sleep(250); } }
@@ -59,7 +59,7 @@ async function waitChecks(page, timeout = 120000) {
     await page.waitForSelector("#storeModal:not([hidden])");
 
     const runs = CATS.map((c) => ({ kind: "preset", value: c }));
-    if (SEARCH) runs.push({ kind: "search", value: SEARCH });
+    SEARCHES.forEach((q) => runs.push({ kind: "search", value: q }));
     const toInstall = [];
     for (const run of runs) {
       if (run.kind === "preset") await page.click(`#storeCats [data-preset="${run.value}"]`);
