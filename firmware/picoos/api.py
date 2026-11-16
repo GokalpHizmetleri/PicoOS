@@ -32,7 +32,7 @@ def build():
 
     srv.add("GET", "/", asset_route("/index.html"))
     for name in files:
-        if name not in ("/setup.html",):
+        if name not in ("/setup.html",):  # includes /catalog.json (built-in store snapshot)
             srv.add("GET", name, asset_route(name))
 
     # -- status ---------------------------------------------------------
@@ -43,6 +43,7 @@ def build():
                 "hostname": config.get("hostname"),
                 "version": VERSION,
             },
+            "build": getattr(assets, "BUILD", {}),
             "system": sysinfo.snapshot(),
             "time": timesvc.snapshot(),
             "wifi": wifi.info(),

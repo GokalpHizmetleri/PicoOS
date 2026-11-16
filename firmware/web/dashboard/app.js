@@ -356,26 +356,42 @@
   // The catalog lists PicoOS apps (store/apps/ in the store repo) and open-source
   // apps that live in their own GitHub repos (pinned to a commit, see tools/update_store.py).
   async function loadCatalog(force) {
-    const { store_repo: repo = "GokalpHizmetleri/PicoOS", store_branch: branch = "main" } = settings();
-    const key = `catalog2:${repo}@${branch}`;
+    const st = settings();
+    const build = (S.status && S.status.build) || {};
+    const repo = st.store_repo || build.repo || "GokalpHizmetleri/PicoOS";
+    // Try the configured branch, then the branch this firmware was built from, then main/master.
+    const branches = [...new Set([st.store_branch, build.branch, "main", "master"].filter(Boolean))];
+    const key = `catalog3:${repo}:${branches.join(",")}`;
     const cached = ls.get(key);
     if (!force && cached && Date.now() - cached.t < 10 * 60e3) return cached.d;
-    const r = await fetch(`${rawBase(repo, branch)}/store/catalog.json?t=${Date.now()}`, { cache: "no-store" });
-    if (!r.ok) throw new Error(`Catalog not found (${r.status}) in ${repo}@${branch}`);
-    const cat = await r.json();
+    let cat = null, used = null, offline = false;
+    for (const br of branches) {
+      try {
+        const r = await fetch(`${rawBase(repo, br)}/store/catalog.json?t=${Date.now()}`, { cache: "no-store" });
+        if (r.ok) { cat = await r.json(); used = br; break; }
+      } catch { /* try next */ }
+    }
+    if (!cat) {
+      // No GitHub (offline, private repo, missing branch): use the snapshot built into the firmware.
+      const r = await fetch("/catalog.json");
+      if (!r.ok) throw new Error("The App Store catalog could not be loaded.");
+      cat = await r.json();
+      used = build.commit || build.branch || "main";
+      offline = true;
+    }
     const apps = (cat.apps || []).map((a) => {
-      const base = a.base || `${rawBase(repo, branch)}/${a.path}/`;
+      const base = a.base || `${rawBase(repo, used)}/${a.path}/`;
       return {
         ...a,
         source: a.source === "github" ? "github" : "picoos",
         repo: a.repo || repo,
-        homepage: a.homepage || `https://github.com/${repo}/tree/${branch}/${a.path}`,
+        homepage: a.homepage || `https://github.com/${repo}/tree/${used}/${a.path}`,
         base,
         iconUrl: a.icon && a.icon.includes(".") ? base + a.icon : null,
       };
     });
-    const d = { apps, updated: cat.updated };
-    ls.set(key, { t: Date.now(), d });
+    const d = { apps, updated: cat.updated, from: `${repo}@${used}`, offline };
+    if (!offline) ls.set(key, { t: Date.now(), d });
     return d;
   }
   const fmtStars = (n) => (n >= 1000 ? (n / 1000).toFixed(n >= 10000 ? 0 : 1) + "k" : String(n));
@@ -470,7 +486,7 @@
     if (!cats.includes(S.storeCat)) S.storeCat = "All";
     $("#storeCats").innerHTML = cats.map((c) => `<button class="chip ${c === S.storeCat ? "active" : ""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
     const total = S.status ? S.status.system.storage.total : 0;
-    $("#storeFree").innerHTML = `${list.length} apps · <b>${fmtBytes(S.free)}</b> free on your Pico` + (tab !== "community" && data.updated ? ` · catalog updated ${esc(new Date(data.updated).toLocaleDateString())}` : "") + (tab === "community" ? ` · public GitHub repos tagged <code>picoos-app</code>` : "");
+    $("#storeFree").innerHTML = `${list.length} apps · <b>${fmtBytes(S.free)}</b> free on your Pico` + (tab !== "community" && data.updated ? ` · catalog updated ${esc(new Date(data.updated).toLocaleDateString())}` : "") + (data.offline ? `<div class="notice">Showing the catalog built into PicoOS because the latest one couldn't be loaded from GitHub. Installing still needs internet in this browser.</div>` : "") + (tab === "community" ? ` · public GitHub repos tagged <code>picoos-app</code>` : "");
     const q = $("#storeSearch").value.trim().toLowerCase();
     const shown = list.filter((a) => (S.storeCat === "All" || (a.category || "Other") === S.storeCat) && (!q || `${a.name} ${a.description} ${a.author}`.toLowerCase().includes(q)));
     if (!shown.length) {
@@ -771,7 +787,7 @@
     // store
     const st = $("#formStore");
     st.store_repo.value = s.store_repo || "";
-    st.store_branch.value = s.store_branch || "main";
+    st.store_branch.value = s.store_branch || "";
     $("#ghToken").value = ls.get("ghToken", "");
     // network
     const w = S.status.wifi;
@@ -835,7 +851,7 @@
     e.preventDefault();
     const f = e.target;
     ls.set("ghToken", $("#ghToken").value.trim());
-    await saveSettings({ store_repo: f.store_repo.value.trim() || "GokalpHizmetleri/PicoOS", store_branch: f.store_branch.value.trim() || "main" }, "App Store source saved");
+    await saveSettings({ store_repo: f.store_repo.value.trim(), store_branch: f.store_branch.value.trim() }, "App Store source saved");
     S.catalog = null;
   });
   $("#btnScan").addEventListener("click", async () => {

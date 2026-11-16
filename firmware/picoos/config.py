@@ -22,9 +22,10 @@ DEFAULTS = {
     "ap_ssid": "",
     # Optional WPA2 password for the setup AP ("" = open network).
     "ap_password": "",
-    # Where the App Store catalog is loaded from (GitHub owner/repo@branch).
-    "store_repo": "GokalpHizmetleri/PicoOS",
-    "store_branch": "main",
+    # Where the App Store's featured catalog is loaded from (GitHub owner/repo@branch).
+    # Empty = automatic: the branch this firmware was built from, then main.
+    "store_repo": "",
+    "store_branch": "",
     # Dashboard look.
     "wallpaper": "aurora",
 }

@@ -221,10 +221,10 @@
           <p class="muted"><b>Explore GitHub</b> runs entirely in your browser: it searches GitHub, checks every repository for a web app that runs on the Pico (index.html, no build step, small enough) and downloads the files straight from GitHub.</p>
           <label>GitHub token <small class="muted">(optional, stored only in this browser)</small><input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_…"></label>
           <small class="muted">Without a token GitHub allows about 10 searches per minute. A token without any scopes (fine-grained, public repositories read-only) raises that to 30 per minute. It is only sent to api.github.com, never to the Pico.</small>
-          <p class="muted"><b>Featured</b> apps are a tested list read from <code>store/catalog.json</code> in this repository:</p>
+          <p class="muted"><b>Featured</b> apps are a tested list read from <code>store/catalog.json</code> on GitHub. Leave these empty for automatic: the branch this firmware was built from, then <code>main</code>; if GitHub can't be reached, the copy built into PicoOS is used.</p>
           <div class="row2">
-            <label>Repository<input name="store_repo" placeholder="owner/repo"></label>
-            <label>Branch<input name="store_branch" placeholder="main"></label>
+            <label>Repository<input name="store_repo" placeholder="automatic (GokalpHizmetleri/PicoOS)"></label>
+            <label>Branch<input name="store_branch" placeholder="automatic"></label>
           </div>
           <div class="form-actions"><button class="btn primary" type="submit">Save</button></div>
         </form>

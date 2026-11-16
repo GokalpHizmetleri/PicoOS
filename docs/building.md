@@ -133,6 +133,15 @@ every repository, prints how many are runnable and why the others were rejected,
 **Install** on some of them and opens each app, failing on files the Pico doesn't serve or on
 JavaScript errors. A JSON report is written to the system temp folder.
 
+### Testing the Featured / Made for PicoOS tabs
+
+```bash
+node tests/featured_test.js
+```
+
+Checks automatic branch selection, falling back from a branch without a catalog, the built-in catalog
+snapshot when GitHub is unreachable, and installs an app from each tab.
+
 ### Testing the featured apps
 
 ```bash

@@ -6,7 +6,9 @@ frozen into the firmware those bytes live in flash (not RAM) and are streamed
 to the browser with `Content-Encoding: gzip`.
 """
 import gzip
+import json
 import os
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,7 +22,31 @@ FILES = {
     "/explore.js": ("dashboard/explore.js", "application/javascript; charset=utf-8"),
     "/setup.html": ("setup/setup.html", "text/html; charset=utf-8"),
     "/favicon.svg": ("favicon.svg", "image/svg+xml"),
+    # Snapshot of the App Store catalog, used when GitHub can't be reached.
+    "/catalog.json": ("../../store/catalog.json", "application/json"),
 }
+
+
+def git(*args):
+    try:
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, timeout=10).stdout.strip()
+    except Exception:  # noqa: BLE001
+        return ""
+
+
+def build_info():
+    """Which repository/branch this firmware was built from (the store reads its catalog there)."""
+    repo = os.environ.get("GITHUB_REPOSITORY", "")
+    if not repo:
+        url = git("remote", "get-url", "origin").rstrip("/")
+        if url.endswith(".git"):
+            url = url[:-4]
+        parts = url.replace(":", "/").split("/")
+        repo = "/".join(parts[-2:]) if len(parts) >= 2 else ""
+    branch = os.environ.get("GITHUB_HEAD_REF") or os.environ.get("GITHUB_REF_NAME") or git("rev-parse", "--abbrev-ref", "HEAD")
+    if branch == "HEAD" or branch.startswith("v"):
+        branch = ""  # detached / tag builds: let the dashboard use main
+    return {"repo": repo or "GokalpHizmetleri/PicoOS", "branch": branch, "commit": git("rev-parse", "HEAD")[:12]}
 
 
 def main():
@@ -39,6 +65,9 @@ def main():
         lines.append("    %r: (%r, %r)," % (route, ctype, gz))
         print("  %-14s %7d -> %6d bytes" % (route, len(raw), len(gz)))
     lines.append("}")
+    info = build_info()
+    lines.append("BUILD = %s" % json.dumps(info))
+    print("build info:", info)
     with open(OUT, "w") as f:
         f.write("\n".join(lines) + "\n")
     print("assets.py: %d bytes of web UI, %d bytes gzipped" % (total_raw, total_gz))

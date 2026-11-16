@@ -163,6 +163,11 @@ lists its files and sizes, so the dashboard can check free space before download
   `ref`. `version` is the short commit hash, so a new upstream commit means a new version.
   A file entry may carry `src` when it is stored under a different name upstream (`rename`).
 
+Where the dashboard reads the catalog: the repository/branch set in *Settings → App Store*, else
+the repository and branch the firmware was built from (`BUILD` in `picoos/assets.py`, exposed in
+`/api/status`), then `main`/`master`. If none can be reached, it uses the snapshot of
+`store/catalog.json` that is built into the firmware (`/catalog.json` on the dashboard).
+
 The daily CI job (`tools/update_store.py`) moves the pins forward. Because downloads use exact
 commits, the file list in the catalog always matches what gets downloaded.
 

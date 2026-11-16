@@ -178,8 +178,10 @@ Click the ⚙️ button.
 - **Forget Wi-Fi & restart setup**: back to the first-run setup.
 
 ### App Store
-- **Repository / branch** the official catalog is loaded from (`owner/repo` + branch). Change it to
-  run your own app store from a fork.
+- **GitHub token** (optional) for more *Explore GitHub* searches per minute; stored only in your browser.
+- **Repository / branch** the *Featured* catalog is loaded from. Leave empty for automatic (the
+  branch this firmware was built from, then `main`). Set it to run your own store from a fork. If
+  GitHub can't be reached, the catalog built into PicoOS is shown.
 
 ### System
 - Version information, **Restart PicoOS**, and the **log** of the last ~120 events (connections,
